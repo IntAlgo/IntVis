@@ -3,5 +3,9 @@ import { VisNetwork } from '../../../components/vis-network/vis-network';
 
 export default createBoard({
     name: 'VisNetwork',
-    Board: () => <VisNetwork />
+    Board: () => <VisNetwork />,
+    environmentProps: {
+        canvasWidth: 194,
+        canvasHeight: 533,
+    },
 });
