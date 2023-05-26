@@ -2,6 +2,7 @@ import styles from './vis-network.module.scss';
 import classNames from 'classnames';
 import React, { useEffect, useRef } from 'react';
 import { DataSet, Network } from 'vis-network/standalone/esm/vis-network';
+import { DFSgraph } from '../../algorithms/DfsGraph';
 export interface VisNetworkProps {
     className?: string;
 }
@@ -11,21 +12,31 @@ export interface VisNetworkProps {
  * To create custom component templates, see https://help.codux.com/kb/en/article/kb16522
  */
 export const VisNetwork = ({ className }: VisNetworkProps) => {
-    const arr_node = [
-        { id: 1, label: 'Node 1' },
-        { id: 2, label: 'Node 2' },
-        { id: 3, label: 'Node 3' },
-        { id: 4, label: 'Node 4' },
-        { id: 5, label: 'Node 5' },
-    ];
+     let arr_node=[
+        { id: 0, label: "0",is_vis:false,color:"white"},
+        { id: 1, label: "1",is_vis:false,color:"white"},
+        { id: 2, label: "2",is_vis:false,color:"white"},
+        { id: 3, label: "3",is_vis:false,color:"white"},
+        { id: 4, label: "4",is_vis:false,color:"white" },
+        { id: 5, label: "5",is_vis:false,color:"white" },
+        { id: 6, label: "6",is_vis:false,color:"white" },
+        { id: 7, label: "7",is_vis:false,color:"white" },
+        { id: 8, label: "8",is_vis:false,color:"white" },
+        { id: 9, label: "9",is_vis:false,color:"white" },
+      ];
 
-    const arr_edge = [
-        { id: '1', from: 1, to: 3 },
-        { id: '2', from: 1, to: 2 },
-        { id: '3', from: 2, to: 4 },
-        { id: '4', from: 2, to: 5 },
-        { id: '5', from: 3, to: 3 },
-    ];
+   let arr_edge=[
+        { id:'a',from: 0, to: 2 },
+        { id:'b',from: 0, to: 1 },
+        { id:'c',from: 1, to: 3 },
+        { id:'d',from: 1, to: 4 },
+        { id:'e',from: 1, to: 5 },
+        { id:'f',from: 2, to: 6 },
+        { id:'g',from: 2, to: 7 },
+        { id:'h',from: 7, to: 0 },
+        { id:'i',from: 7, to: 9 },
+        { id:'j',from: 4, to: 8 },
+      ]
     let nodes = new DataSet(arr_node);
     let edges = new DataSet(arr_edge);
     let options = {
@@ -77,14 +88,20 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             zoomView: false,
         },
     };
-
     const visJsRef = useRef<HTMLDivElement>(null);
-    const func=() => {
+    const func = () => {
+        const Df=new DFSgraph( arr_edge,arr_node, 0);
         const network =
             visJsRef.current && new Network(visJsRef.current, { nodes, edges }, options);
-        // Use `network` here to configure events, etc
-    }
-    useEffect( func , [visJsRef, nodes, edges]);
+        let j=1;
+        while(!Df.complete()){
+            let x=Df.next();
+            setTimeout(()=>nodes.update({id:x,color:"orange"}),1000*j)
+            j++;
+        }
+    };
+    useEffect(func, [visJsRef]);
 
     return <div ref={visJsRef} />;
 };
+
