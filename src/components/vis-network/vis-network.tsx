@@ -111,7 +111,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
 
     const visJsRef = useRef<HTMLDivElement>(null);
     const func = () => {
-        const Df = new DFSgraph(arr_edge, arr_node, 0);
+        const Df = new DFSgraph(arr_edge, arr_node, 2);
         const network =
             visJsRef.current && new Network(visJsRef.current, { nodes, edges }, options);
         if (network) {
@@ -126,7 +126,9 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         }
     };
     useEffect(func, [visJsRef]);
-
+    // useEffect()
+    let fn=()=>console.log(nodes)
+    useEffect(fn,[nodes])
     return (
         <div id="container">
             <div ref={visJsRef} />
