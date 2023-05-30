@@ -90,21 +90,21 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             forceAtlas2Based: {
                 springLength: 200,
                 springConstant: 0.05,
-                damping: 0.09,
+                damping: 0.5,
                 centralGravity: 0.01,
             },
-            manipulation: {
-                enabled: true,
-                initiallyActive: true,
-                addNode: true,
-                addEdge: true,
-                editNode: undefined,
-                editEdge: true,
-                deleteNode: true,
-                deleteEdge: true,
-                controlNodeStyle: {
-                    // all node options are valid.
-                },
+        },
+        manipulation: {
+            enabled: true,
+            initiallyActive: true,
+            addNode: true,
+            addEdge: true,
+            editNode: undefined,
+            editEdge: true,
+            deleteNode: true,
+            deleteEdge: true,
+            controlNodeStyle: {
+                // all node options are valid.
             },
         },
     };
