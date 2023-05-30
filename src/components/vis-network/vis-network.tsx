@@ -88,9 +88,9 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             enabled: true,
             solver: 'forceAtlas2Based',
             forceAtlas2Based: {
-                springLength: 200,
-                springConstant: 0.05,
-                damping: 0.5,
+                springLength: 20,
+                springConstant: 0.2,
+                damping: 0.9,
                 centralGravity: 0.01,
             },
         },

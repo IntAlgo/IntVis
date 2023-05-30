@@ -6,6 +6,6 @@ export default createBoard({
     Board: () => <VisNetwork />,
     environmentProps: {
         canvasWidth: 194,
-        canvasHeight: 533,
+        canvasHeight: 515,
     },
 });
