@@ -7,54 +7,51 @@ export interface VisNetworkProps {
     className?: string;
 }
 
-/**
- * This component was created using Codux's Default new component template.
- * To create custom component templates, see https://help.codux.com/kb/en/article/kb16522
- */
 export const VisNetwork = ({ className }: VisNetworkProps) => {
-     let arr_node=[
-        { id: 0, label: "0",is_vis:false,color:"white"},
-        { id: 1, label: "1",is_vis:false,color:"white"},
-        { id: 2, label: "2",is_vis:false,color:"white"},
-        { id: 3, label: "3",is_vis:false,color:"white"},
-        { id: 4, label: "4",is_vis:false,color:"white" },
-        { id: 5, label: "5",is_vis:false,color:"white" },
-        { id: 6, label: "6",is_vis:false,color:"white" },
-        { id: 7, label: "7",is_vis:false,color:"white" },
-        { id: 8, label: "8",is_vis:false,color:"white" },
-        { id: 9, label: "9",is_vis:false,color:"white" },
-      ];
+    let arr_node = [
+        { id: 0, label: '0', is_vis: false, color: 'white' },
+        { id: 1, label: '1', is_vis: false, color: 'white' },
+        { id: 2, label: '2', is_vis: false, color: 'white' },
+        { id: 3, label: '3', is_vis: false, color: 'white' },
+        { id: 4, label: '4', is_vis: false, color: 'white' },
+        { id: 5, label: '5', is_vis: false, color: 'white' },
+        { id: 6, label: '6', is_vis: false, color: 'white' },
+        { id: 7, label: '7', is_vis: false, color: 'white' },
+        { id: 8, label: '8', is_vis: false, color: 'white' },
+        { id: 9, label: '9', is_vis: false, color: 'white' },
+    ];
 
-   let arr_edge=[
-        { id:'a',from: 0, to: 2 },
-        { id:'b',from: 0, to: 1 },
-        { id:'c',from: 1, to: 3 },
-        { id:'d',from: 1, to: 4 },
-        { id:'e',from: 1, to: 5 },
-        { id:'f',from: 2, to: 6 },
-        { id:'g',from: 2, to: 7 },
-        { id:'h',from: 7, to: 0 },
-        { id:'i',from: 7, to: 9 },
-        { id:'j',from: 4, to: 8 },
-      ]
+    let arr_edge = [
+        { id: 'a', from: 0, to: 2 },
+        { id: 'b', from: 0, to: 1 },
+        { id: 'c', from: 1, to: 3 },
+        { id: 'd', from: 1, to: 4 },
+        { id: 'e', from: 1, to: 5 },
+        { id: 'f', from: 2, to: 6 },
+        { id: 'g', from: 2, to: 7 },
+        { id: 'h', from: 7, to: 0 },
+        { id: 'i', from: 7, to: 9 },
+        { id: 'j', from: 4, to: 8 },
+    ];
     let nodes = new DataSet(arr_node);
     let edges = new DataSet(arr_edge);
     let options = {
+        autoResize: true,
         layout: {
-            randomSeed: undefined,
-            improvedLayout: true,
-            clusterThreshold: 150,
+            randomSeed: 10,
+            improvedLayout: false,
+            clusterThreshold: 10,
             hierarchical: {
                 enabled: false,
-                levelSeparation: 1050,
-                nodeSpacing: 1000,
+                levelSeparation: 200,
+                nodeSpacing: 100,
                 treeSpacing: 200,
                 blockShifting: true,
                 edgeMinimization: true,
                 parentCentralization: true,
-                direction: 'UD', // UD, DU, LR, RL
-                sortMethod: 'directed', // hubsize, directed
-                shakeTowards: 'leaves', // roots, leaves
+                direction: 'UD',
+                sortMethod: 'directed',
+                shakeTowards: 'leaves',
             },
         },
         edges: {
@@ -85,23 +82,54 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             selectConnectedEdges: true,
             tooltipDelay: 300,
             zoomSpeed: 1,
-            zoomView: false,
+            zoomView: true,
+        },
+        physics: {
+            enabled: true,
+            solver: 'forceAtlas2Based',
+            forceAtlas2Based: {
+                springLength: 200,
+                springConstant: 0.05,
+                damping: 0.09,
+                centralGravity: 0.01,
+            },
+            manipulation: {
+                enabled: true,
+                initiallyActive: true,
+                addNode: true,
+                addEdge: true,
+                editNode: undefined,
+                editEdge: true,
+                deleteNode: true,
+                deleteEdge: true,
+                controlNodeStyle: {
+                    // all node options are valid.
+                },
+            },
         },
     };
+
     const visJsRef = useRef<HTMLDivElement>(null);
     const func = () => {
-        const Df=new DFSgraph( arr_edge,arr_node, 0);
+        const Df = new DFSgraph(arr_edge, arr_node, 0);
         const network =
             visJsRef.current && new Network(visJsRef.current, { nodes, edges }, options);
-        let j=1;
-        while(!Df.complete()){
-            let x=Df.next();
-            setTimeout(()=>nodes.update({id:x,color:"orange"}),1000*j)
+        if (network) {
+            network.fit({ animation: true, minZoomLevel: 0.1, maxZoomLevel: 0.25 });
+        }
+        network?.setSize(window.innerWidth.toString() + 'px', window.innerHeight.toString() + 'px');
+        let j = 1;
+        while (!Df.complete()) {
+            let x = Df.next();
+            setTimeout(() => nodes.update({ id: x, color: 'orange' }), 1000 * j);
             j++;
         }
     };
     useEffect(func, [visJsRef]);
 
-    return <div ref={visJsRef} />;
+    return (
+        <div id="container">
+            <div ref={visJsRef} />
+        </div>
+    );
 };
-
