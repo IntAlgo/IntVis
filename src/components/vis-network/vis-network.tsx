@@ -6,9 +6,12 @@ import { DFSgraph } from '../../algorithms/DfsGraph';
 export interface VisNetworkProps {
     className?: string;
 }
-
+// interface Nodes{
+//     id: number;
+//     label?
+// }
 export const VisNetwork = ({ className }: VisNetworkProps) => {
-    let arr_node = [
+    let arr_node:any[] = [
         { id: 0, label: '0', is_vis: false, color: 'white' },
         { id: 1, label: '1', is_vis: false, color: 'white' },
         { id: 2, label: '2', is_vis: false, color: 'white' },
@@ -108,7 +111,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             },
         },
     };
-
+    let i= 10
     const visJsRef = useRef<HTMLDivElement>(null);
     const func = () => {
         // let [network,setnetwork]=useState(visJsRef.current && new Network(visJsRef.current, { nodes, edges }, options);)
@@ -117,7 +120,17 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             network.fit({ animation: true, minZoomLevel: 0.1, maxZoomLevel: 0.25 });
         }
         network?.setSize(window.innerWidth.toString() + 'px', window.innerHeight.toString() + 'px');
+        // network?.on('click',(),e)
+        network?.on('click',(e) =>{
+            console.log(e);
+            let se_node={id:i,label:`${i}`,is_vis:false,color:'white',x:e['pointer']['canvas'].x,y:e['pointer']['canvas'].y}
+            nodes.add(se_node)
+            arr_node.push(se_node)
+            // nodes.update();
+            i+=1;
+        })
         network?.on('selectNode',(e)=>{
+            console.log(e);
             const Df = new DFSgraph(arr_edge, arr_node, e['nodes'][0]);
         let j = 1;
         while (!Df.complete()) {
@@ -129,7 +142,6 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
        
     };
     useEffect(func, [visJsRef]);
-    // useEffect()
     let fn = () => console.log(nodes);
     useEffect(fn, [nodes]);
     return (
