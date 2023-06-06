@@ -4,10 +4,10 @@ import { NavBar } from './components/nav-bar/nav-bar';
 
 function App() {
     return (
-        <div className={styles.App}>
+        <div className={styles.App} >
             <NavBar />
+            <VisNetwork />
             <header className={styles['App-header']}>
-                <VisNetwork />
                 <a
                     className={styles['App-link']}
                     href="https://reactjs.org"

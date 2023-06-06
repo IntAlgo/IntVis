@@ -1,6 +1,6 @@
 import styles from './vis-network.module.scss';
 import classNames from 'classnames';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { DataSet, Network } from 'vis-network/standalone/esm/vis-network';
 import { DFSgraph } from '../../algorithms/DfsGraph';
 export interface VisNetworkProps {
@@ -101,7 +101,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             addEdge: true,
             editNode: undefined,
             editEdge: true,
-            deleteNode: true,
+            deleteNode: true, 
             deleteEdge: true,
             controlNodeStyle: {
                 // all node options are valid.
@@ -111,27 +111,30 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
 
     const visJsRef = useRef<HTMLDivElement>(null);
     const func = () => {
-        const Df = new DFSgraph(arr_edge, arr_node, 2);
-        const network =
-            visJsRef.current && new Network(visJsRef.current, { nodes, edges }, options);
+        // let [network,setnetwork]=useState(visJsRef.current && new Network(visJsRef.current, { nodes, edges }, options);)
+        let network = visJsRef.current && new Network(visJsRef.current, { nodes, edges }, options);
         if (network) {
             network.fit({ animation: true, minZoomLevel: 0.1, maxZoomLevel: 0.25 });
         }
         network?.setSize(window.innerWidth.toString() + 'px', window.innerHeight.toString() + 'px');
+        network?.on('selectNode',(e)=>{
+            const Df = new DFSgraph(arr_edge, arr_node, e['nodes'][0]);
         let j = 1;
         while (!Df.complete()) {
             let x = Df.next();
             setTimeout(() => nodes.update({ id: x, color: 'orange' }), 1000 * j);
             j++;
         }
+        })
+       
     };
     useEffect(func, [visJsRef]);
     // useEffect()
-    let fn=()=>console.log(nodes)
-    useEffect(fn,[nodes])
+    let fn = () => console.log(nodes);
+    useEffect(fn, [nodes]);
     return (
         <div id="container">
-            <div ref={visJsRef} />
+            <div ref={visJsRef} className={styles['Network']} />
         </div>
     );
 };
