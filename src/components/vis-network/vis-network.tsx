@@ -100,7 +100,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         manipulation: {
             enabled: true,
             initiallyActive: true,
-            addNode: true,
+            addNode: false,
             addEdge: true,
             editNode: undefined,
             editEdge: true,
@@ -120,7 +120,6 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             network.fit({ animation: true, minZoomLevel: 0.1, maxZoomLevel: 0.25 });
         }
         network?.setSize(window.innerWidth.toString() + 'px', window.innerHeight.toString() + 'px');
-        // network?.on('click',(),e)
         network?.on('click',(e) =>{
             console.log(e);
             let se_node={id:i,label:`${i}`,is_vis:false,color:'white',x:e['pointer']['canvas'].x,y:e['pointer']['canvas'].y}

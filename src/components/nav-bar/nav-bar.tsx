@@ -16,6 +16,7 @@ export const NavBar = ({ className }: NavBarProps) => {
                 <a href="/home" className={styles["navbar-item"]}>Home </a> | <a href="/projects" className={styles["navbar-item"]}>Projects</a> |{' '}
                 <a className={styles["navbar-item"]} href="/about">About</a> | <a href="/contact" className={styles["navbar-item"]}>Contact Us</a>
             </nav>
+            <h3>Click to Add Node</h3>
         </div>
     );
 };
