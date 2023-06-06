@@ -126,12 +126,10 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             let se_node={id:i,label:`${i}`,is_vis:false,color:'white',x:e['pointer']['canvas'].x,y:e['pointer']['canvas'].y}
             nodes.add(se_node)
             arr_node.push(se_node)
-            // nodes.update();
             i+=1;
         })
         network?.on('selectNode',(e)=>{
-            console.log(e);
-            const Df = new DFSgraph(arr_edge, arr_node, e['nodes'][0]);
+            const Df = new DFSgraph(edges.get(), nodes.get(), e['nodes'][0]);
         let j = 1;
         while (!Df.complete()) {
             let x = Df.next();
