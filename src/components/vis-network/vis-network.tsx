@@ -131,12 +131,13 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
     }
     const selectNodefn=(e:any)=>{
          const Df = new DFSgraph(edges.current.get(), nodes.current.get(), e['nodes'][0]);
-    let j = 1;
-    while (!Df.complete()) {
-        let x = Df.next();
-        setTimeout(() => nodes.current.update({ id: x, color: 'orange' }), 1000 * j);
-        j++;
-    }
+    let inter=setInterval(()=>{
+        let x=Df.next();
+        nodes.current.update({ id: x, color: 'orange' })
+        if(Df.complete()){
+            clearInterval(inter)
+        }
+    },1000)
     }
     let funce=()=>{
         network.current?.disableEditMode()
@@ -154,8 +155,6 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
     }
     useEffect(func, [visJsRef]);
     useEffect(funce,[visJsRef,mode])
-    let fn = () => console.log(nodes);
-    useEffect(fn, [nodes]);
     return (
         <div id="container">
             <div ref={visJsRef} className={styles['Network']} />
