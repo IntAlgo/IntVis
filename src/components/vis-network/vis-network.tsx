@@ -109,7 +109,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             },
         },
     };
-    let i= 10
+    let i= useRef(10)
     let network=useRef<Network|null>(null)
     const visJsRef = useRef<HTMLDivElement>(null);
     const func = () => {
@@ -124,10 +124,10 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
     const addfn=(e:any)=>{
         
         console.log(e);
-        let se_node={id:i,label:`${i}`,is_vis:false,color:'white',x:e['pointer']['canvas'].x,y:e['pointer']['canvas'].y}
+        let se_node={id:i.current,label:`${i.current}`,is_vis:false,color:'white',x:e['pointer']['canvas'].x,y:e['pointer']['canvas'].y}
         nodes.current.add(se_node)
         arr_node.push(se_node)
-        i+=1;
+        i.current+=1;
     }
     const selectNodefn=(e:any)=>{
          const Df = new DFSgraph(edges.current.get(), nodes.current.get(), e['nodes'][0]);
