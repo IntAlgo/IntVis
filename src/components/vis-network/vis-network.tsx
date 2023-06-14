@@ -1,16 +1,14 @@
 import styles from './vis-network.module.scss';
 import classNames from 'classnames';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { DataSet, Network } from 'vis-network/standalone/esm/vis-network';
 import { DFSgraph } from '../../algorithms/DfsGraph';
+import { dataContext } from '../../context/data-context';
 export interface VisNetworkProps {
     className?: string;
 }
-// interface Nodes{
-//     id: number;
-//     label?
-// }
 export const VisNetwork = ({ className }: VisNetworkProps) => {
+    const {mode,setMode}=useContext(dataContext)
     let arr_node:any[] = [
         { id: 0, label: '0', is_vis: false, color: 'white' },
         { id: 1, label: '1', is_vis: false, color: 'white' },
@@ -36,8 +34,8 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         { id: 'i', from: 7, to: 9 },
         { id: 'j', from: 4, to: 8 },
     ];
-    let nodes = new DataSet(arr_node);
-    let edges = new DataSet(arr_edge);
+    let nodes = useRef(new DataSet(arr_node));
+    let edges = useRef(new DataSet(arr_edge));
     let options = {
         autoResize: true,
         layout: {
@@ -112,33 +110,50 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         },
     };
     let i= 10
+    let network=useRef<Network|null>(null)
     const visJsRef = useRef<HTMLDivElement>(null);
     const func = () => {
         // let [network,setnetwork]=useState(visJsRef.current && new Network(visJsRef.current, { nodes, edges }, options);)
-        let network = visJsRef.current && new Network(visJsRef.current, { nodes, edges }, options);
+        network.current = visJsRef.current && new Network(visJsRef.current, { nodes:nodes.current, edges:edges.current }, options);
         if (network) {
-            network.fit({ animation: true, minZoomLevel: 0.1, maxZoomLevel: 0.25 });
+            network.current?.fit({ animation: true, minZoomLevel: 0.1, maxZoomLevel: 0.25 });
         }
-        network?.setSize(window.innerWidth.toString() + 'px', window.innerHeight.toString() + 'px');
-        network?.on('click',(e) =>{
-            console.log(e);
-            let se_node={id:i,label:`${i}`,is_vis:false,color:'white',x:e['pointer']['canvas'].x,y:e['pointer']['canvas'].y}
-            nodes.add(se_node)
-            arr_node.push(se_node)
-            i+=1;
-        })
-        network?.on('selectNode',(e)=>{
-            const Df = new DFSgraph(edges.get(), nodes.get(), e['nodes'][0]);
-        let j = 1;
-        while (!Df.complete()) {
-            let x = Df.next();
-            setTimeout(() => nodes.update({ id: x, color: 'orange' }), 1000 * j);
-            j++;
-        }
-        })
+        network.current?.setSize(window.innerWidth.toString() + 'px', window.innerHeight.toString() + 'px');
        
     };
+    const addfn=(e:any)=>{
+        
+        console.log(e);
+        let se_node={id:i,label:`${i}`,is_vis:false,color:'white',x:e['pointer']['canvas'].x,y:e['pointer']['canvas'].y}
+        nodes.current.add(se_node)
+        arr_node.push(se_node)
+        i+=1;
+    }
+    const selectNodefn=(e:any)=>{
+         const Df = new DFSgraph(edges.current.get(), nodes.current.get(), e['nodes'][0]);
+    let j = 1;
+    while (!Df.complete()) {
+        let x = Df.next();
+        setTimeout(() => nodes.current.update({ id: x, color: 'orange' }), 1000 * j);
+        j++;
+    }
+    }
+    let funce=()=>{
+        network.current?.disableEditMode()
+        if(mode==="start"){
+            network.current?.off('click');
+            network.current?.on("selectNode",selectNodefn);
+        }
+        if(mode==="add"){
+            network.current?.off('selectNode');
+            network.current?.on("click",addfn);
+        }
+        if(mode==="edge"){
+            network.current?.addEdgeMode();
+        }
+    }
     useEffect(func, [visJsRef]);
+    useEffect(funce,[visJsRef,mode])
     let fn = () => console.log(nodes);
     useEffect(fn, [nodes]);
     return (
@@ -147,3 +162,4 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         </div>
     );
 };
+

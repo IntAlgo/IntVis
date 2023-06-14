@@ -1,17 +1,17 @@
 import styles from './App.module.scss';
 import { VisNetwork } from './components/vis-network/vis-network';
 import { NavBar } from './components/nav-bar/nav-bar';
-import { dataContext } from "./Context/data-context";
+import { dataContext } from "./context/data-context";
 import { useState } from 'react';
 
 function App() {
-    const [valuestobesent, setValuestobesent]=useState();
+    const [mode, setMode]=useState("start");
     return (
         <div className={styles.App} >
             <dataContext.Provider
             value={{
-                valuestobesent, 
-                setValuestobesent,
+                mode, 
+                setMode,
             }}
             >
             <NavBar />
