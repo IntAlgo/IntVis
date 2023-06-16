@@ -4,6 +4,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { DataSet, Network } from 'vis-network/standalone/esm/vis-network';
 import { DFSgraph } from '../../algorithms/DfsGraph';
 import { dataContext } from '../../context/data-context';
+import { BFSgraph } from '../../algorithms/Bfsgraph';
 export interface VisNetworkProps {
     className?: string;
 }
@@ -129,7 +130,17 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         arr_node.push(se_node)
         i.current+=1;
     }
-    const selectNodefn=(e:any)=>{
+    // const selectNodefn=(e:any)=>{
+    //      const Df = new BFSgraph(edges.current.get(), nodes.current.get(), e['nodes'][0]);
+    // let inter=setInterval(()=>{
+    //     let x=Df.next();
+    //     nodes.current.update({ id: x, color: 'orange' })
+    //     if(Df.complete()){
+    //         clearInterval(inter)
+    //     }
+    // },1000)
+    // }
+    const startDFS=(e:any)=>{
          const Df = new DFSgraph(edges.current.get(), nodes.current.get(), e['nodes'][0]);
     let inter=setInterval(()=>{
         let x=Df.next();
@@ -139,11 +150,25 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         }
     },1000)
     }
+    const startBFS=(e:any)=>{
+         const Df = new BFSgraph(edges.current.get(), nodes.current.get(), e['nodes'][0]);
+    let inter=setInterval(()=>{
+        let x=Df.next();
+        nodes.current.update({ id: x, color: 'black' })
+        if(Df.complete()){
+            clearInterval(inter)
+        }
+    },1000)
+    }
+
+    const resetGraph=()=>{
+
+    }
     let funce=()=>{
         network.current?.disableEditMode()
         if(mode==="start"){
             network.current?.off('click');
-            network.current?.on("selectNode",selectNodefn);
+            // network.current?.on("selectNode",selectNodefn);
         }
         if(mode==="add"){
             network.current?.off('selectNode');
@@ -151,6 +176,16 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         }
         if(mode==="edge"){
             network.current?.addEdgeMode();
+        }
+        if(mode=="DFS")
+        {
+            network.current?.off('click');
+            network.current?.on("selectNode",startDFS);
+        }
+        if(mode=="BFS")
+        {
+            network.current?.off('click');
+            network.current?.on("selectNode",startBFS);
         }
     }
     useEffect(func, [visJsRef]);
