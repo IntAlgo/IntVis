@@ -14,12 +14,16 @@ export const NavBar = ({ className }: NavBarProps) => {
     const {mode,setMode}=useContext(dataContext);
     return (
         <div className={classNames(styles.root, className)}>
-            <nav>
-                <button onClick={()=>{setMode("start")}} className={styles["navbar-item"]}>Start </button> | <button onClick={()=>{setMode("add")}} className={styles["navbar-item"]}>add</button> |{' '}
-                <button onClick={()=>setMode("edge")} className={styles["navbar-item"]} >edge//still in progress</button> | <button className={styles["navbar-item"]}>Contact Us</button>
-            </nav>
-            {mode==="add"&&<h3>Click to Add Node</h3>}
-            <h5>{mode}</h5>
+            <div>
+                <button id="add" onClick={()=>{setMode("add")}} className={styles["navbar-item"]}>add</button> |
+                <button id="edge" onClick={()=>setMode("edge")} className={styles["navbar-item"]} >edge//still in progress</button> | 
+                <button className={styles["navbar-item"]}>Contact Us</button> |  
+                <button onClick={()=>{setMode("DFS")}} className={styles["navbar-item"]}>Visualize DFS</button>|  
+                <button onClick={()=>{setMode("BFS")}} className={styles["navbar-item"]}>Visualize BFS</button>|  
+                <button onClick={()=>{setMode("reset")}} className={styles["navbar-item"]}>Reset</button>
+            </div>
+            <h3>Welcome to INTALGO</h3>
+            <h5>{mode=="DFS" || mode=="BFS" ? `Click on starting node for implementing ${mode}` : `${mode}`} </h5>
         </div>
     );
 };

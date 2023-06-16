@@ -4,6 +4,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { DataSet, Network } from 'vis-network/standalone/esm/vis-network';
 import { DFSgraph } from '../../algorithms/DfsGraph';
 import { dataContext } from '../../context/data-context';
+import { BFSgraph } from '../../algorithms/Bfsgraph';
 export interface VisNetworkProps {
     className?: string;
 }
@@ -118,7 +119,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         if (network) {
             network.current?.fit({ animation: true, minZoomLevel: 0.1, maxZoomLevel: 0.25 });
         }
-        network.current?.setSize(window.innerWidth.toString() + 'px', window.innerHeight.toString() + 'px');
+        // network.current?.setSize(window.innerWidth.toString() + 'px', window.innerHeight.toString() + 'px');
        
     };
     const addfn=(e:any)=>{
@@ -129,7 +130,17 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         arr_node.push(se_node)
         i.current+=1;
     }
-    const selectNodefn=(e:any)=>{
+    // const selectNodefn=(e:any)=>{
+    //      const Df = new BFSgraph(edges.current.get(), nodes.current.get(), e['nodes'][0]);
+    // let inter=setInterval(()=>{
+    //     let x=Df.next();
+    //     nodes.current.update({ id: x, color: 'orange' })
+    //     if(Df.complete()){
+    //         clearInterval(inter)
+    //     }
+    // },1000)
+    // }
+    const startDFS=(e:any)=>{
          const Df = new DFSgraph(edges.current.get(), nodes.current.get(), e['nodes'][0]);
     let inter=setInterval(()=>{
         let x=Df.next();
@@ -139,24 +150,30 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         }
     },1000)
     }
+    const startBFS=(e:any)=>{
+         const Df = new BFSgraph(edges.current.get(), nodes.current.get(), e['nodes'][0]);
+    let inter=setInterval(()=>{
+        let x=Df.next();
+        nodes.current.update({ id: x, color: 'orange' })
+        if(Df.complete()){
+            clearInterval(inter)
+        }
+    },1000)
+    }
     let funce=()=>{
-        network.current?.disableEditMode()
-        if(mode==="start"){
-            network.current?.off('click');
-            network.current?.on("selectNode",selectNodefn);
-        }
-        if(mode==="add"){
-            network.current?.off('selectNode');
-            network.current?.on("click",addfn);
-        }
-        if(mode==="edge"){
-            network.current?.addEdgeMode();
-        }
+        network.current?.disableEditMode();
+        network.current?.off('click');
+        network.current?.off('selectNode');
+        network.current?.unselectAll();
+        if(mode==="add")network.current?.on("click",addfn);
+        if(mode==="edge")network.current?.addEdgeMode();
+        if(mode=="DFS")network.current?.on("selectNode",startDFS);
+        if(mode=="BFS")network.current?.on("selectNode",startBFS);
     }
     useEffect(func, [visJsRef]);
     useEffect(funce,[visJsRef,mode])
     return (
-        <div id="container">
+        <div id={styles['container']}>
             <div ref={visJsRef} className={styles['Network']} />
         </div>
     );

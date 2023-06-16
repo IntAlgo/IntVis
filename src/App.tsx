@@ -17,14 +17,14 @@ function App() {
             <NavBar />
             <VisNetwork />
             </dataContext.Provider>
-            <header className={styles['App-header']}>
+            {/* <header className={styles['App-header']}>
                 <a
                     className={styles['App-link']}
                     href="https://reactjs.org"
                     target="_blank"
                     rel="noopener noreferrer"
                 ></a>
-            </header>
+            </header> */}
         </div>
     );
 }
