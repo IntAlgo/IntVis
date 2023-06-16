@@ -1,7 +1,7 @@
 export class BFSgraph {
     constructor(edges, nodes ,startnodeId){
-       this.adj=[[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
-       for(let i=0;i<edges.length;i++)this.adj[edges[i]["from"]].push(edges[i]["to"]);
+        this.adj=Array.from({length:nodes.length},()=>[]);
+        for(let i=0;i<edges.length;i++)this.adj[edges[i]["from"]].push(edges[i]["to"]);
        this.startNode=startnodeId;
        this.nodes=nodes;
        this.queue=[];

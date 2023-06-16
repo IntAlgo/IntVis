@@ -130,6 +130,11 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         arr_node.push(se_node)
         i.current+=1;
     }
+    let resetGraph=()=>{
+        nodes.current.forEach((id)=>{
+            nodes.current.update({id:id,color:'white'})
+        })
+    }
     // const selectNodefn=(e:any)=>{
     //      const Df = new BFSgraph(edges.current.get(), nodes.current.get(), e['nodes'][0]);
     // let inter=setInterval(()=>{
@@ -169,6 +174,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         if(mode==="edge")network.current?.addEdgeMode();
         if(mode=="DFS")network.current?.on("selectNode",startDFS);
         if(mode=="BFS")network.current?.on("selectNode",startBFS);
+        if(mode==="reset")resetGraph();
     }
     useEffect(func, [visJsRef]);
     useEffect(funce,[visJsRef,mode])
