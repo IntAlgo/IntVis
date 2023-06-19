@@ -5,6 +5,7 @@ import { DataSet, Network } from 'vis-network/standalone/esm/vis-network';
 import { DFSgraph } from '../../algorithms/DfsGraph';
 import { dataContext } from '../../context/data-context';
 import { BFSgraph } from '../../algorithms/Bfsgraph';
+import { Id } from 'vis-data/declarations/data-interface';
 export interface VisNetworkProps {
     className?: string;
 }
@@ -100,10 +101,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             enabled: true,
             initiallyActive: true,
             addNode: false,
-            addEdge: function(edgeData:any,callback:any) {
-             callback({...edgeData,color:'white'})
-              },
-            editNode: undefined,
+            addEdge:false,
             editEdge: true,
             deleteNode: true, 
             deleteEdge: true,
@@ -133,8 +131,11 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         i.current+=1;
     }
     let resetGraph=()=>{
-        nodes.current.forEach((id)=>{
+        nodes.current.forEach((_,id)=>{
             nodes.current.update({id:id,color:'white'})
+        })
+        edges.current.forEach((_,id:any)=>{
+            edges.current.update({id:id,color:'white'})
         })
     }
     const startDFS=(e:any)=>{
