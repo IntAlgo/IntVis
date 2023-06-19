@@ -24,16 +24,16 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
     ];
 
     let arr_edge = [
-        { id: 'a', from: 0, to: 2 },
-        { id: 'b', from: 0, to: 1 },
-        { id: 'c', from: 1, to: 3 },
-        { id: 'd', from: 1, to: 4 },
-        { id: 'e', from: 1, to: 5 },
-        { id: 'f', from: 2, to: 6 },
-        { id: 'g', from: 2, to: 7 },
-        { id: 'h', from: 7, to: 0 },
-        { id: 'i', from: 7, to: 9 },
-        { id: 'j', from: 4, to: 8 },
+        { id: 'a', from: 0, to: 2,color:'white' },
+        { id: 'b', from: 0, to: 1,color:'white'},
+        { id: 'c', from: 1, to: 3 ,color:'white'},
+        { id: 'd', from: 1, to: 4,color:'white' },
+        { id: 'e', from: 1, to: 5,color:'white' },
+        { id: 'f', from: 2, to: 6 ,color:'white'},
+        { id: 'g', from: 2, to: 7,color:'white' },
+        { id: 'h', from: 7, to: 0 ,color:'white'},
+        { id: 'i', from: 7, to: 9,color:'white' },
+        { id: 'j', from: 4, to: 8 ,color:'white'},
     ];
     let nodes = useRef(new DataSet(arr_node));
     let edges = useRef(new DataSet(arr_edge));
@@ -100,7 +100,9 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             enabled: true,
             initiallyActive: true,
             addNode: false,
-            addEdge: true,
+            addEdge: function(edgeData:any,callback:any) {
+             callback({...edgeData,color:'white'})
+              },
             editNode: undefined,
             editEdge: true,
             deleteNode: true, 
@@ -135,21 +137,13 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             nodes.current.update({id:id,color:'white'})
         })
     }
-    // const selectNodefn=(e:any)=>{
-    //      const Df = new BFSgraph(edges.current.get(), nodes.current.get(), e['nodes'][0]);
-    // let inter=setInterval(()=>{
-    //     let x=Df.next();
-    //     nodes.current.update({ id: x, color: 'orange' })
-    //     if(Df.complete()){
-    //         clearInterval(inter)
-    //     }
-    // },1000)
-    // }
     const startDFS=(e:any)=>{
          const Df = new DFSgraph(edges.current.get(), nodes.current.get(), e['nodes'][0]);
     let inter=setInterval(()=>{
         let x=Df.next();
-        nodes.current.update({ id: x, color: 'orange' })
+        console.log(x);
+        nodes.current.update({ id: x?.node, color: 'orange' })
+        edges.current.update({id:x?.edgeId,color: 'orange'})
         if(Df.complete()){
             clearInterval(inter)
         }
@@ -170,11 +164,24 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         network.current?.off('click');
         network.current?.off('selectNode');
         network.current?.unselectAll();
-        if(mode==="add")network.current?.on("click",addfn);
-        if(mode==="edge")network.current?.addEdgeMode();
-        if(mode=="DFS")network.current?.on("selectNode",startDFS);
-        if(mode=="BFS")network.current?.on("selectNode",startBFS);
+        if(mode==="add"){
+            network.current?.on("click",addfn);
+            network.current?.setOptions({physics:{enabled:false}});
+        }
+        if(mode==="edge"){
+            network.current?.addEdgeMode();
+            network.current?.setOptions({physics:{enabled:false}});
+    }
+        if(mode=="DFS"){
+            network.current?.on("selectNode",startDFS);
+            network.current?.setOptions({physics:{enabled:true}});
+    }
+        if(mode=="BFS"){
+            network.current?.on("selectNode",startBFS);
+            network.current?.setOptions({physics:{enabled:true}});
+        }
         if(mode==="reset")resetGraph();
+        console.log(edges.current.get());
     }
     useEffect(func, [visJsRef]);
     useEffect(funce,[visJsRef,mode])
