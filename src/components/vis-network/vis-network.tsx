@@ -46,6 +46,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         is_vis: boolean;
         color: string;
         level:number;
+        size:number;
     }, "id">>=useRef(new DataSet());
     let treeEdges:React.MutableRefObject<DataSet<{
         id: string;
@@ -193,7 +194,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             nodes.current.update({ id: x?.node, color: 'orange' });
             edges.current.update({ id: x?.edgeId, color: 'orange' });
             if(x?.edgeId===null){
-                treeNodes.current.update({id:x?.node, label:`${x?.node}`,level: 0});
+                treeNodes.current.update({id:x?.node, label:`${x?.node}`,level: 0,size:30});
                 return;
             }else{
             let t:any=edges.current.get(x?.edgeId);
