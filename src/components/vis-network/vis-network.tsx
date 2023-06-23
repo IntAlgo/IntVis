@@ -5,15 +5,19 @@ import { DataSet, Network } from 'vis-network/standalone/esm/vis-network';
 import { DFSgraph } from '../../algorithms/DfsGraph';
 import { dataContext } from '../../context/data-context';
 import { BFSgraph } from '../../algorithms/Bfsgraph';
-import { Network_data } from '../../context/network';
-import { FullItem, Id } from 'vis-data/declarations/data-interface';
+import { Node,Edge } from 'vis-network/standalone/esm/vis-network';
 import { Tree } from '../tree/tree';
 export interface VisNetworkProps {
     className?: string;
 }
+interface dfNode extends Node{
+    is_vis:boolean
+}
+interface dfEdge extends Edge{
+}
 export const VisNetwork = ({ className }: VisNetworkProps) => {
     const { mode, setMode } = useContext(dataContext);
-    let arr_node:any[] = [
+    let arr_node:dfNode[] = [
         { id: 0, label: '0', is_vis: false, color: 'white' },
         { id: 1, label: '1', is_vis: false, color: 'white' },
         { id: 2, label: '2', is_vis: false, color: 'white' },
@@ -26,7 +30,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         { id: 9, label: '9', is_vis: false, color: 'white' },
     ];
 
-    let arr_edge = [
+    let arr_edge:dfEdge[] = [
         { id: 'a', from: 0, to: 2, color: 'white' },
         { id: 'b', from: 0, to: 1, color: 'white' },
         { id: 'c', from: 1, to: 3, color: 'white' },
@@ -40,20 +44,8 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
     ];
     let nodes = useRef(new DataSet(arr_node));
     let edges = useRef(new DataSet(arr_edge));
-    let treeNodes:React.MutableRefObject<DataSet<{
-        id: number;
-        label: string;
-        is_vis: boolean;
-        color: string;
-        level:number;
-        size:number;
-    }, "id">>=useRef(new DataSet());
-    let treeEdges:React.MutableRefObject<DataSet<{
-        id: string;
-        from: number;
-        to: number;
-        color: string;
-    }, "id">>=useRef(new DataSet());
+    let treeNodes:React.MutableRefObject<DataSet<Node, "id">>=useRef(new DataSet());
+    let treeEdges:React.MutableRefObject<DataSet<Edge, "id">>=useRef(new DataSet());
     let options = {
         autoResize: true,
         layout: {
@@ -155,36 +147,38 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
     };
     let resetGraph = () => {
         nodes.current.forEach((_, id) => {
-            nodes.current.update({ id: id, color: 'white' });
+            nodes.current.update({ id: id, color: 'white' ,is_vis:false});
         });
         edges.current.forEach((_, id: any) => {
             edges.current.update({ id: id, color: 'white' });
         });
+        treeNodes.current.clear();
+        treeEdges.current.clear();
     };
     const startDFS = (e: any) => {
         const Df = new DFSgraph(edges.current.get(), nodes.current.get(), e['nodes'][0]);
         let inter = setInterval(() => {
+            console.log(nodes.current.get(),edges.current.get());
             let x = Df.next();
-            console.log(x);
+            // console.log(x);
             nodes.current.update({ id: x?.node, color: 'orange' });
-            edges.current.update({ id: x?.edgeId, color: 'orange' });
             if(x?.edgeId===null){
                 treeNodes.current.update({id:x?.node, label:`${x?.node}`,level: 0});
                 return;
             }else{
+            edges.current.update({ id: x?.edgeId, color: 'orange' });
             let t:any=edges.current.get(x?.edgeId);
-            console.log(t,"edge");
             let t2:any=treeNodes.current.get(t.from)
             let lev=t2?t2.level:0;
-            console.log(lev,"lev");
             treeNodes.current.update({id:x?.node, label:`${x?.node}`,level: lev+1});
             treeEdges.current.update(t)
         }
-
-            if (Df.complete()) {
-                clearInterval(inter);
-            }
-        }, 1000);
+        
+        if (Df.complete()) {
+            clearInterval(inter);
+            console.log(nodes.current.get(),edges.current.get());
+        }
+    }, 1000);
     };
     const startBFS = (e: any) => {
         const Df = new BFSgraph(edges.current.get(), nodes.current.get(), e['nodes'][0]);
@@ -192,11 +186,11 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             let x = Df.next();
             console.log(x);
             nodes.current.update({ id: x?.node, color: 'orange' });
-            edges.current.update({ id: x?.edgeId, color: 'orange' });
             if(x?.edgeId===null){
                 treeNodes.current.update({id:x?.node, label:`${x?.node}`,level: 0,size:30});
                 return;
             }else{
+            edges.current.update({ id: x?.edgeId, color: 'orange' });
             let t:any=edges.current.get(x?.edgeId);
             console.log(t,"edge");
             let t2:any=treeNodes.current.get(t.from)
@@ -208,6 +202,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
 
             if (Df.complete()) {
                 clearInterval(inter);
+
             }
         }, 1000);
     };
