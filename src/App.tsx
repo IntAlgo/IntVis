@@ -6,12 +6,15 @@ import { useState } from 'react';
 
 function App() {
     const [mode, setMode] = useState('start');
+    const [finished, setFinished] = useState(true);
     return (
         <div className={styles.App}>
             <dataContext.Provider
                 value={{
                     mode,
                     setMode,
+                    finished,
+                    setFinished
                 }}
             >
                 <NavBar />

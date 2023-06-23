@@ -2,6 +2,7 @@ import styles from './nav-bar.module.scss';
 import classNames from 'classnames';
 import { dataContext } from '../../context/data-context';
 import { useContext } from 'react';
+import { finished } from 'stream';
 export interface NavBarProps {
     className?: string;
 }
@@ -11,7 +12,7 @@ export interface NavBarProps {
  * To create custom component templates, see https://help.codux.com/kb/en/article/kb16522
  */
 export const NavBar = ({ className }: NavBarProps) => {
-    const {mode,setMode}=useContext(dataContext);
+    const {mode,setMode,finished}=useContext(dataContext);
     return (
         <div className={classNames(styles.root, className)}>
             <div>
@@ -20,7 +21,7 @@ export const NavBar = ({ className }: NavBarProps) => {
                 <button className={styles["navbar-item"]}>Contact Us</button> |  
                 <button onClick={()=>{setMode("DFS")}} className={styles["navbar-item"]}>Visualize DFS</button>|  
                 <button onClick={()=>{setMode("BFS")}} className={styles["navbar-item"]}>Visualize BFS</button>|  
-                <button onClick={()=>{setMode("reset")}} className={styles["navbar-item"]}>Reset</button>
+                <button disabled={!finished} onClick={()=>{setMode("reset")}} className={styles["navbar-item"]}>Reset</button>
             </div>
             <h3>Welcome to INTALGO</h3>
             <h5>{mode==="DFS" || mode==="BFS" ? `Click on starting node for implementing ${mode}` : `${mode}`} </h5>

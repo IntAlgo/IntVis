@@ -14,7 +14,7 @@ interface dfNode extends Node {
 }
 interface dfEdge extends Edge {}
 export const VisNetwork = ({ className }: VisNetworkProps) => {
-    const { mode, setMode } = useContext(dataContext);
+    const { mode, setFinished } = useContext(dataContext);
     let arr_node: dfNode[] = [
         { id: 0, label: '0', is_vis: false, color: 'white' },
         { id: 1, label: '1', is_vis: false, color: 'white' },
@@ -154,6 +154,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         treeEdges.current.clear();
     };
     const startDFS = (e: any) => {
+        setFinished(false);
         const Df = new DFSgraph(edges.current.get(), nodes.current.get(), e['nodes'][0]);
         let inter = setInterval(() => {
             console.log(nodes.current.get(), edges.current.get());
@@ -175,10 +176,12 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             if (Df.complete()) {
                 clearInterval(inter);
                 console.log(nodes.current.get(), edges.current.get());
+                setFinished(true);
             }
         }, 1000);
     };
     const startBFS = (e: any) => {
+        setFinished(false);
         const Df = new BFSgraph(edges.current.get(), nodes.current.get(), e['nodes'][0]);
         let inter = setInterval(() => {
             let x = Df.next();
@@ -190,16 +193,15 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             } else {
                 edges.current.update({ id: x?.edgeId, color: 'orange' });
                 let t: any = edges.current.get(x?.edgeId);
-                console.log(t, 'edge');
                 let t2: any = treeNodes.current.get(t.from);
                 let lev = t2 ? t2.level : 0;
-                console.log(lev, 'lev');
                 treeNodes.current.update({ id: x?.node, label: `${x?.node}`, level: lev + 1 });
                 treeEdges.current.update(t);
             }
 
             if (Df.complete()) {
                 clearInterval(inter);
+                setFinished(true);
             }
         }, 1000);
     };
