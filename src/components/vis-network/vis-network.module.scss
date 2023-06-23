@@ -1,8 +1,25 @@
+.Container{
+   height: 77vh;
+   display:flex;
+}
+
 .Network{
    background-color:#2d352d;
-   height: 25rem;
-   width:90%;
-   margin:auto;
+   height:25rem;
+   width:48%;
+   height: 98%;
+   margin:1%;
    z-index:3;
-   position:absolute;
+   border-radius: 20px;
+   overflow: hidden;
 }
+
+// .Network{
+//    background-color:#2d352d;
+//    height:98%;
+//    width:98%;
+//    margin:1%;
+//    z-index:3;
+//    border-radius: 20px;
+//    overflow: hidden;
+// }

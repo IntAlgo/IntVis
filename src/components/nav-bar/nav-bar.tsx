@@ -15,15 +15,15 @@ export const NavBar = ({ className }: NavBarProps) => {
     return (
         <div className={classNames(styles.root, className)}>
             <div>
-                <button id="add" onClick={()=>{setMode("add")}} className={styles["navbar-item"]}>add</button> |
-                <button id="edge" onClick={()=>setMode("edge")} className={styles["navbar-item"]} >edge//still in progress</button> | 
+                <button id="add" onClick={()=>{setMode("add")}} className={styles["navbar-item"]}>add node</button> |
+                <button id="edge" onClick={()=>setMode("edge")} className={styles["navbar-item"]} >edge</button> | 
                 <button className={styles["navbar-item"]}>Contact Us</button> |  
                 <button onClick={()=>{setMode("DFS")}} className={styles["navbar-item"]}>Visualize DFS</button>|  
                 <button onClick={()=>{setMode("BFS")}} className={styles["navbar-item"]}>Visualize BFS</button>|  
                 <button onClick={()=>{setMode("reset")}} className={styles["navbar-item"]}>Reset</button>
             </div>
             <h3>Welcome to INTALGO</h3>
-            <h5>{mode=="DFS" || mode=="BFS" ? `Click on starting node for implementing ${mode}` : `${mode}`} </h5>
+            <h5>{mode==="DFS" || mode==="BFS" ? `Click on starting node for implementing ${mode}` : `${mode}`} </h5>
         </div>
     );
 };
