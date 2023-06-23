@@ -192,10 +192,8 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             }else{
             edges.current.update({ id: x?.edgeId, color: 'orange' });
             let t:any=edges.current.get(x?.edgeId);
-            console.log(t,"edge");
             let t2:any=treeNodes.current.get(t.from)
             let lev=t2?t2.level:0;
-            console.log(lev,"lev");
             treeNodes.current.update({id:x?.node, label:`${x?.node}`,level: lev+1});
             treeEdges.current.update(t)
         }
