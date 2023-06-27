@@ -19,8 +19,8 @@ export const NavBar = ({ className }: NavBarProps) => {
                 <button id="add" onClick={()=>{setMode("add")}} className={styles["navbar-item"]}>add node</button> |
                 <button id="edge" onClick={()=>setMode("edge")} className={styles["navbar-item"]} >edge</button> | 
                 <button className={styles["navbar-item"]}>Contact Us</button> |  
-                <button onClick={()=>{setMode("DFS")}} className={styles["navbar-item"]}>Visualize DFS</button>|  
-                <button onClick={()=>{setMode("BFS")}} className={styles["navbar-item"]}>Visualize BFS</button>|  
+                <button disabled={!finished} onClick={()=>{setMode("DFS")}} className={styles["navbar-item"]}>Visualize DFS</button>|  
+                <button disabled={!finished} onClick={()=>{setMode("BFS")}} className={styles["navbar-item"]}>Visualize BFS</button>|  
                 <button disabled={!finished} onClick={()=>{setMode("reset")}} className={styles["navbar-item"]}>Reset</button>
             </div>
             <h3>Welcome to INTALGO</h3>

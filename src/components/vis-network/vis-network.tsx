@@ -143,7 +143,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         arr_node.push(se_node);
         i.current += 1;
     };
-    let resetGraph = () => {
+    let resetGraph = async () => {
         nodes.current.forEach((_, id) => {
             nodes.current.update({ id: id, color: 'white', is_vis: false });
         });
@@ -205,7 +205,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             }
         }, 1000);
     };
-    let funce = () => {
+    let funce = async() => {
         network.current?.disableEditMode();
         network.current?.off('click');
         network.current?.off('selectNode');
@@ -219,12 +219,12 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             network.current?.setOptions({ physics: { enabled: false } });
         }
         if (mode === 'DFS') {
-            resetGraph();
+            await resetGraph();
             network.current?.on('selectNode', startDFS);
             network.current?.setOptions({ physics: { enabled: true } });
         }
         if (mode === 'BFS') {
-            resetGraph();
+            await resetGraph();
             network.current?.on('selectNode', startBFS);
             network.current?.setOptions({ physics: { enabled: true } });
         }
@@ -232,7 +232,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         console.log(edges.current.get());
     };
     useEffect(func, [visJsRef]);
-    useEffect(funce, [visJsRef, mode]);
+    useEffect(()=>{funce()}, [visJsRef, mode]);
     return (
         <div className="flex">
             <div className={styles['Container']}>
