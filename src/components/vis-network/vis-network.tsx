@@ -6,6 +6,7 @@ import { dataContext } from '../../context/data-context';
 import { BFSgraph } from '../../algorithms/Bfsgraph';
 import { Node, Edge } from 'vis-network/standalone/esm/vis-network';
 import { Tree } from '../tree/tree';
+import { randomInt } from 'crypto';
 export interface VisNetworkProps {
     className?: string;
 }
@@ -104,11 +105,12 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             },
         },
         manipulation: {
-            enabled: true,
+            enabled: false,
             initiallyActive: true,
             addNode: false,
             addEdge: (data: any, callback: any) => {
                 callback({ ...data, color: 'white' });
+                network.current?.addEdgeMode();
             },
             editEdge: true,
             deleteNode: true,
@@ -169,6 +171,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
                 let t: any = edges.current.get(x?.edgeId);
                 let t2: any = treeNodes.current.get(t.from);
                 let lev = t2 ? t2.level : 0;
+   
                 treeNodes.current.update({ id: x?.node, label: `${x?.node}`, level: lev + 1 });
                 treeEdges.current.update(t);
             }
@@ -207,6 +210,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
     };
     let funce = async() => {
         network.current?.disableEditMode();
+        // network.current?.addE
         network.current?.off('click');
         network.current?.off('selectNode');
         network.current?.unselectAll();
