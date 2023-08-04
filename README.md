@@ -1,59 +1,58 @@
-<div align="center">  
-    <img height="50" src="./src/assets/codux.svg">  
-    <h1>React App template for Codux</h1>
-</div>
+# IntAlgo - Interactive Graph Algorithm Visualizer
 
-### A Visual IDE for React Projects
+IntAlgo is an interactive graph algorithm visualizer website developed by Prof. Ranveer Singh at the Indian Institute of Technology, Indore. The project aims to provide a user-friendly platform to visualize Depth-First Search (DFS) and Breadth-First Search (BFS) algorithms in action, along with the ability to manipulate a customized graph by adding, updating, and deleting nodes and edges.
 
-Codux is an all-in-one visual development environment. Whether you’re starting a new app, creating components, or editing an existing project, every visual change you make reflects instantly in the code and vice versa. To learn more about Codux, visit our website - [https://www.codux.com/](https://www.codux.com/)
+## Website Link
 
-This project was bootstrapped with [`create-react-app`](https://github.com/facebook/create-react-app).
+([https://int-algo.vercel.app/](https://int-algo.vercel.app/))
 
-It includes a single React component to start your project with, a sample [`codux.config.json`](codux.config.json) with preconfigured keys, a `package.json` file to describe the project's packages and dependencies, and a folder and component structure to put everything neatly in its place.
+## Technologies Used
 
-- Edit, render and compose apps that make use of **`React`**-based components.
-- Create components with **`TypeScript`**, **`SCSS`** and **`CSS Modules`** support.
-- Visually edit in real-time and in an isolated environment.
+- React JS: A popular JavaScript library for building user interfaces, providing a smooth and responsive user experience.
+- VisJS: A dynamic visualization library for creating interactive network graphs, ideal for illustrating graph algorithms.
+- TailwindCSS: A utility-first CSS framework that allows for rapid and flexible UI development, ensuring a visually appealing design.
 
-### Available Scripts
+## Features
 
-In the project directory, you can run:
+1. Algorithm Visualizations: IntAlgo allows users to visualize both DFS and BFS algorithms on custom graphs. The algorithm visualizations provide step-by-step animations to help users understand the traversal process.
 
-### `npm start`
+2. Custom Graph Operations: Users can perform various operations on the graph, such as:
+   - Adding Nodes: Add new nodes to the graph with custom labels.
+   - Updating Nodes: Modify the labels of existing nodes for better identification.
+   - Deleting Nodes: Remove unwanted nodes from the graph.
+   - Adding Edges: Create edges between nodes to establish connections.
+   - Deleting Edges: Remove edges to restructure the graph.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+3. Intuitive User Interface: The website boasts an intuitive and user-friendly interface, making it easy for users to interact with the graph and the visualization controls.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## How to Use
 
-### `npm test`
+1. Clone the Repository
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. Install Dependencies:
+   ```
+   npm install
+   ```
 
-### `npm run build`
+3. Run the Development Server:
+   ```
+   npm start
+   ```
+   
+4. Open your web browser and navigate to `http://localhost:3000` to access IntAlgo.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Deployment
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+IntAlgo is currently hosted on Vercel, ensuring high availability and quick access for users. Any changes pushed to the main branch of the GitHub repository automatically trigger a new deployment to the live website.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Contribution Guidelines
 
-### `npm run eject`
+Contributions to IntAlgo are welcome! If you find any bugs, want to add new features, or improve existing ones, please open an issue or submit a pull request on the GitHub repository.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Acknowledgments
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Special thanks to the contributors and supporters of this project who helped make IntAlgo a reality.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Contact Information
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-### Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+For any inquiries or support, you can reach out to Samip Shah at cse210001061@iiti.ac.in.
