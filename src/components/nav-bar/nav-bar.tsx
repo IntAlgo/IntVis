@@ -103,7 +103,7 @@ export const NavBar = ({ className }: NavBarProps) => {
                         )}
                     </div>
                     <div
-                        onMouseEnter={() => setMode('reset')}
+                        onClick={() => setMode('reset')}
                         className="inline-flex w-full justify-center gap-x-1.5 px-2 py-1 text-lg font-semibold text-gray-900 h-full"
                     >
                         <span className="my-auto">Reset</span>

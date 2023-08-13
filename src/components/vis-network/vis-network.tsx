@@ -6,6 +6,7 @@ import { dataContext } from '../../context/data-context';
 import { BFSgraph } from '../../algorithms/Bfsgraph';
 import { Node, Edge } from 'vis-network/standalone/esm/vis-network';
 import { Tree } from '../tree/tree';
+import { randomInt } from 'crypto';
 export interface VisNetworkProps {
     className?: string;
 }
@@ -104,11 +105,12 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             },
         },
         manipulation: {
-            enabled: true,
+            enabled: false,
             initiallyActive: true,
             addNode: false,
             addEdge: (data: any, callback: any) => {
                 callback({ ...data, color: 'white' });
+                network.current?.addEdgeMode();
             },
             editEdge: true,
             deleteNode: true,
@@ -144,8 +146,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         arr_node.push(se_node);
         i.current += 1;
     };
-
-    let resetGraph = () => {
+    let resetGraph = async () => {
         nodes.current.forEach((_, id) => {
             nodes.current.update({ id: id, color: 'white', is_vis: false });
         });
@@ -159,30 +160,38 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
     // dfs algo
     const startDFS = (e: any) => {
         setFinished(false);
-        const Df = new DFSgraph(edges.current.get(), nodes.current.get(), e['nodes'][0]);
+        const Df = new DFSgraph(
+            JSON.parse(JSON.stringify(edges.current.get())),
+            JSON.parse(JSON.stringify(nodes.current.get())),
+            e['nodes'][0]
+        );
         let inter = setInterval(() => {
-            console.log(nodes.current.get(), edges.current.get());
+            // console.log(nodes.current.get(), edges.current.get());
             let x = Df.next();
-            // console.log(x);
+            // let nextNodeInfo: any = nodes.current.get(x?.node);
+            // console.log(nextNodeInfo);
+            // if (nextNodeInfo.color !== 'orange') {
             nodes.current.update({ id: x?.node, color: 'orange' });
             if (x?.edgeId === null) {
                 treeNodes.current.update({ id: x?.node, label: `${x?.node}`, level: 0 });
                 return;
-            } else {
+            } else  {
                 edges.current.update({ id: x?.edgeId, color: 'orange' });
                 let t: any = edges.current.get(x?.edgeId);
                 let t2: any = treeNodes.current.get(t.from);
                 let lev = t2 ? t2.level : 0;
+
                 treeNodes.current.update({ id: x?.node, label: `${x?.node}`, level: lev + 1 });
                 treeEdges.current.update(t);
             }
+            // }
 
             if (Df.complete()) {
                 clearInterval(inter);
-                console.log(nodes.current.get(), edges.current.get());
+                // console.log(nodes.current.get(), edges.current.get());
                 setFinished(true);
             }
-        }, 1000);
+        }, 500);
     };
 
     // bfs algo
@@ -191,7 +200,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         const Df = new BFSgraph(edges.current.get(), nodes.current.get(), e['nodes'][0]);
         let inter = setInterval(() => {
             let x = Df.next();
-            console.log(x);
+            // console.log(x);
             nodes.current.update({ id: x?.node, color: 'orange' });
             if (x?.edgeId === null) {
                 treeNodes.current.update({ id: x?.node, label: `${x?.node}`, level: 0, size: 30 });
@@ -212,8 +221,9 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         }, 1000);
     };
 
-    let funce = () => {
+    let funce = async () => {
         network.current?.disableEditMode();
+        // network.current?.addE
         network.current?.off('click');
         network.current?.off('selectNode');
         network.current?.unselectAll();
@@ -226,20 +236,22 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             network.current?.setOptions({ physics: { enabled: false } });
         }
         if (mode === 'DFS') {
-            resetGraph();
+            await resetGraph();
             network.current?.on('selectNode', startDFS);
             network.current?.setOptions({ physics: { enabled: true } });
         }
         if (mode === 'BFS') {
-            resetGraph();
+            await resetGraph();
             network.current?.on('selectNode', startBFS);
             network.current?.setOptions({ physics: { enabled: true } });
         }
         if (mode === 'reset') resetGraph();
-        console.log(edges.current.get());
+        // console.log(edges.current.get());
     };
     useEffect(func, [visJsRef]);
-    useEffect(funce, [visJsRef, mode]);
+    useEffect(() => {
+        funce();
+    }, [visJsRef, mode]);
     return (
         <div className="w-full h-full">
             <div className="h-full my-1 flex justify-between">
