@@ -129,6 +129,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             network.current?.fit({ animation: true, minZoomLevel: 0.1, maxZoomLevel: 0.25 });
         }
     };
+
     const addfn = (e: any) => {
         console.log(e);
         let se_node = {
@@ -143,6 +144,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         arr_node.push(se_node);
         i.current += 1;
     };
+
     let resetGraph = () => {
         nodes.current.forEach((_, id) => {
             nodes.current.update({ id: id, color: 'white', is_vis: false });
@@ -153,6 +155,8 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         treeNodes.current.clear();
         treeEdges.current.clear();
     };
+
+    // dfs algo
     const startDFS = (e: any) => {
         setFinished(false);
         const Df = new DFSgraph(edges.current.get(), nodes.current.get(), e['nodes'][0]);
@@ -180,6 +184,8 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             }
         }, 1000);
     };
+
+    // bfs algo
     const startBFS = (e: any) => {
         setFinished(false);
         const Df = new BFSgraph(edges.current.get(), nodes.current.get(), e['nodes'][0]);
@@ -205,6 +211,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             }
         }, 1000);
     };
+
     let funce = () => {
         network.current?.disableEditMode();
         network.current?.off('click');
@@ -234,9 +241,12 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
     useEffect(func, [visJsRef]);
     useEffect(funce, [visJsRef, mode]);
     return (
-        <div className="flex">
-            <div className={styles['Container']}>
-                <div ref={visJsRef} className={styles['Network']}></div>
+        <div className="w-full h-full">
+            <div className="h-full my-1 flex justify-between">
+                <div
+                    ref={visJsRef}
+                    className="rounded-md overflow-hidden h-full z-3 w-[48%] bg-cyan-800 mx-auto"
+                ></div>
                 <Tree nodes={treeNodes} edges={treeEdges} />
             </div>
         </div>

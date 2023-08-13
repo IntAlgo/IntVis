@@ -1,4 +1,3 @@
-import styles from './App.module.scss';
 import { VisNetwork } from './components/vis-network/vis-network';
 import { NavBar } from './components/nav-bar/nav-bar';
 import { dataContext } from './context/data-context';
@@ -8,17 +7,17 @@ function App() {
     const [mode, setMode] = useState('start');
     const [finished, setFinished] = useState(true);
     return (
-        <div className={styles.App}>
+        <div className="text-center bg-gradient-to-b from-slate-300 to-white h-full">
             <dataContext.Provider
                 value={{
                     mode,
                     setMode,
                     finished,
-                    setFinished
+                    setFinished,
                 }}
             >
                 <NavBar />
-                <VisNetwork />
+                <div className="h-[90vh] w-full"><VisNetwork /></div>
             </dataContext.Provider>
         </div>
     );

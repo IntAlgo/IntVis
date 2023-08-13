@@ -82,5 +82,10 @@ export const Tree = ({ className, nodes, edges }: TreeProps) => {
         tree_network.current?.fit({ animation: true, minZoomLevel: 0.7, maxZoomLevel: 1 });
     };
     useEffect(func, [visJsRef]);
-    return <div ref={visJsRef} className={styles['Network']}></div>;
+    return (
+        <div
+            ref={visJsRef}
+            className="rounded-md overflow-hidden h-full z-3 w-[48%] bg-cyan-800 mx-auto"
+        ></div>
+    );
 };

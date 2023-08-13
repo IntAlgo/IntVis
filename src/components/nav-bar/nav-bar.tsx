@@ -1,8 +1,8 @@
-import styles from './nav-bar.module.scss';
-import classNames from 'classnames';
 import { dataContext } from '../../context/data-context';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { finished } from 'stream';
+import NavButton from '../../utils/NavButton';
+import classNames from 'classnames';
 export interface NavBarProps {
     className?: string;
 }
@@ -12,19 +12,105 @@ export interface NavBarProps {
  * To create custom component templates, see https://help.codux.com/kb/en/article/kb16522
  */
 export const NavBar = ({ className }: NavBarProps) => {
-    const {mode,setMode,finished}=useContext(dataContext);
+    const { mode, setMode, finished } = useContext(dataContext);
+
+    const AlgorithmsList = ['BFS', 'DFS'];
+    const ModifyOptions = ['add', 'edge'];
+    const [algoOptions, setAlgoOptions] = useState(false);
+    const [modifyOptions, setModifyOptions] = useState(false);
+
     return (
-        <div className={classNames(styles.root, className)}>
-            <div>
-                <button id="add" onClick={()=>{setMode("add")}} className={styles["navbar-item"]}>add node</button> |
-                <button id="edge" onClick={()=>setMode("edge")} className={styles["navbar-item"]} >edge</button> | 
-                <button className={styles["navbar-item"]}>Contact Us</button> |  
-                <button onClick={()=>{setMode("DFS")}} className={styles["navbar-item"]}>Visualize DFS</button>|  
-                <button onClick={()=>{setMode("BFS")}} className={styles["navbar-item"]}>Visualize BFS</button>|  
-                <button disabled={!finished} onClick={()=>{setMode("reset")}} className={styles["navbar-item"]}>Reset</button>
-            </div>
-            <h3>Welcome to INTALGO</h3>
-            <h5>{mode==="DFS" || mode==="BFS" ? `Click on starting node for implementing ${mode}` : `${mode}`} </h5>
+        <div className="h-[8vh] bg-white">
+            <nav
+                aria-label="main navigation"
+                role="navigation"
+                className="h-full w-full flex flex-row justify-between px-3"
+                tabIndex={0}
+            >
+                <div className="w-fit my-auto text-[30px]">IntAlgo</div>
+                <div className="h-full flex gap-x-3">
+                    {/* options */}
+                    <div className="relative inline-block text-left h-full">
+                        <div
+                            className="inline-flex w-full justify-center gap-x-1.5 px-2 text-lg font-semibold text-gray-900 h-full"
+                            onClick={() => {
+                                setAlgoOptions(!algoOptions);
+                            }}
+                        >
+                            <span
+                                className={classNames(
+                                    algoOptions
+                                        ? 'my-auto py-2 px-1 rounded-md bg-slate-500'
+                                        : 'my-auto py-2 px-1 rounded-md'
+                                )}
+                            >
+                                Algorithms
+                            </span>
+                        </div>
+                        {algoOptions && (
+                            <div className="absolute left-0 z-10 w-56 origin-top-right rounded-t-none rounded-b-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none transition-all ease-in duration-500">
+                                <div>
+                                    {AlgorithmsList.map((item, index) => {
+                                        return (
+                                            <NavButton
+                                                key={index}
+                                                title={item}
+                                                currState={mode}
+                                                setState={setMode}
+                                                setClose={setAlgoOptions}
+                                                desiredState={item}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    <div className="relative inline-block text-left h-full">
+                        <div
+                            className="inline-flex w-full justify-center gap-x-1.5 px-2 text-lg font-semibold text-gray-900 h-full"
+                            onClick={() => {
+                                setModifyOptions(!modifyOptions);
+                            }}
+                        >
+                            <span
+                                className={classNames(
+                                    modifyOptions
+                                        ? 'my-auto py-2 px-1 rounded-md bg-slate-500'
+                                        : 'my-auto py-2 px-1 rounded-md'
+                                )}
+                            >
+                                Modify
+                            </span>
+                        </div>
+                        {modifyOptions && (
+                            <div className="absolute left-0 z-10 w-56 origin-top-right rounded-t-none rounded-b-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none transition-all ease-in duration-500">
+                                <div className="py-1">
+                                    {ModifyOptions.map((item, index) => {
+                                        return (
+                                            <NavButton
+                                                key={index}
+                                                title={item}
+                                                currState={mode}
+                                                setState={setMode}
+                                                setClose={setModifyOptions}
+                                                desiredState={item}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    <div
+                        onMouseEnter={() => setMode('reset')}
+                        className="inline-flex w-full justify-center gap-x-1.5 px-2 py-1 text-lg font-semibold text-gray-900 h-full"
+                    >
+                        <span className="my-auto">Reset</span>
+                    </div>
+                </div>
+                <div>contact</div>
+            </nav>
         </div>
     );
 };
