@@ -2,7 +2,8 @@
 import styles from './tree.module.scss';
 import { DataSet, Network } from 'vis-network/standalone/esm/vis-network';
 import { useEffect, useRef } from 'react';
-
+import { dataContext } from '../../context/data-context';
+import { useContext } from 'react';
 export interface TreeProps {
     className?: string;
     nodes: React.MutableRefObject<DataSet<any, 'id'>>;
@@ -57,22 +58,14 @@ let options = {
         zoomSpeed: 1,
         zoomView: true,
     },
-    physics: {
-        enabled: false,
-        solver: 'forceAtlas2Based',
-        forceAtlas2Based: {
-            springLength: 20,
-            springConstant: 0.2,
-            damping: 0.9,
-            centralGravity: 0.01,
-        },
-    },
+    physics:false,
 };
 /**
  * This component was created using Codux's Default new component template.
  * To create custom component templates, see https://help.codux.com/kb/en/article/kb16522
  */
 export const Tree = ({ className, nodes, edges }: TreeProps) => {
+    const { finished } = useContext(dataContext);
     let tree_network = useRef<Network | null>(null);
     const visJsRef = useRef<HTMLDivElement>(null);
     const func = () => {
@@ -82,6 +75,12 @@ export const Tree = ({ className, nodes, edges }: TreeProps) => {
         tree_network.current?.fit({ animation: true, minZoomLevel: 0.7, maxZoomLevel: 1 });
     };
     useEffect(func, [visJsRef]);
+    useEffect(() => {
+        if (finished) {
+            tree_network.current?.storePositions();
+            console.log("used");
+        }
+    }, [finished])
     return (
         <div
             ref={visJsRef}

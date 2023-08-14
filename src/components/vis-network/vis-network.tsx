@@ -6,14 +6,10 @@ import { dataContext } from '../../context/data-context';
 import { BFSgraph } from '../../algorithms/Bfsgraph';
 import { Node, Edge } from 'vis-network/standalone/esm/vis-network';
 import { Tree } from '../tree/tree';
-import { randomInt } from 'crypto';
+import { dfEdge,dfNode } from '../../types/type';
 export interface VisNetworkProps {
     className?: string;
 }
-interface dfNode extends Node {
-    is_vis: boolean;
-}
-interface dfEdge extends Edge {}
 export const VisNetwork = ({ className }: VisNetworkProps) => {
     const { mode, setFinished } = useContext(dataContext);
     let arr_node: dfNode[] = [
@@ -30,20 +26,20 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
     ];
 
     let arr_edge: dfEdge[] = [
-        { id: 'a', from: 0, to: 2, color: 'white' },
-        { id: 'b', from: 0, to: 1, color: 'white' },
-        { id: 'c', from: 1, to: 3, color: 'white' },
-        { id: 'd', from: 1, to: 4, color: 'white' },
-        { id: 'e', from: 1, to: 5, color: 'white' },
-        { id: 'f', from: 2, to: 6, color: 'white' },
-        { id: 'g', from: 2, to: 7, color: 'white' },
-        { id: 'h', from: 7, to: 0, color: 'white' },
-        { id: 'i', from: 7, to: 9, color: 'white' },
-        { id: 'j', from: 4, to: 8, color: 'white' },
+        { id: 'a', from: 0, to: 2, color: 'white',in_tree: false },
+        { id: 'c', from: 1, to: 3, color: 'white',in_tree: false },
+        { id: 'd', from: 1, to: 4, color: 'white',in_tree: false },
+        { id: 'b', from: 0, to: 1, color: 'white',in_tree: false },
+        { id: 'e', from: 1, to: 5, color: 'white',in_tree: false },
+        { id: 'f', from: 2, to: 6, color: 'white',in_tree: false },
+        { id: 'g', from: 2, to: 7, color: 'white',in_tree: false },
+        { id: 'h', from: 7, to: 0, color: 'white',in_tree: false },
+        { id: 'i', from: 7, to: 9, color: 'white',in_tree: false },
+        { id: 'j', from: 4, to: 8, color: 'white',in_tree: false },
     ];
     let nodes = useRef(new DataSet(arr_node));
     let edges = useRef(new DataSet(arr_edge));
-    let treeNodes: React.MutableRefObject<DataSet<Node, 'id'>> = useRef(new DataSet());
+    let treeNodes: React.MutableRefObject<DataSet<dfNode, 'id'>> = useRef(new DataSet());
     let treeEdges: React.MutableRefObject<DataSet<Edge, 'id'>> = useRef(new DataSet());
     let options = {
         autoResize: true,
@@ -161,35 +157,44 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
     const startDFS = (e: any) => {
         setFinished(false);
         const Df = new DFSgraph(
-            JSON.parse(JSON.stringify(edges.current.get())),
-            JSON.parse(JSON.stringify(nodes.current.get())),
+            edges.current.get(),
+            nodes.current.get(),
             e['nodes'][0]
         );
         let inter = setInterval(() => {
-            // console.log(nodes.current.get(), edges.current.get());
+            if (Df.complete()) {
+                clearInterval(inter);
+                setFinished(true);
+                
+                let f=()=>{
+                    console.log(treeNodes.current.get());
+                    edges.current.forEach((e)=>{
+                    treeEdges.current.add(e);
+                },{filter:(e)=>{return !e.in_tree}})
+            }
+            treeNodes.current.update(treeNodes.current.map((e)=>{
+                return {...e,fixed: { x: true , y: true }}
+            }));
+            setTimeout(f,500);
+            // setTimeout(()=>console.log(treeNodes.current.get()),1000);
+        }
             let x = Df.next();
-            // let nextNodeInfo: any = nodes.current.get(x?.node);
-            // console.log(nextNodeInfo);
-            // if (nextNodeInfo.color !== 'orange') {
+            if(x===null){
+                clearInterval(inter);
+                return;
+            }
             nodes.current.update({ id: x?.node, color: 'orange' });
             if (x?.edgeId === null) {
                 treeNodes.current.update({ id: x?.node, label: `${x?.node}`, level: 0 });
                 return;
             } else  {
-                edges.current.update({ id: x?.edgeId, color: 'orange' });
+                edges.current.update({ id: x?.edgeId, color: 'orange',in_tree: true });
                 let t: any = edges.current.get(x?.edgeId);
                 let t2: any = treeNodes.current.get(t.from);
                 let lev = t2 ? t2.level : 0;
 
                 treeNodes.current.update({ id: x?.node, label: `${x?.node}`, level: lev + 1 });
                 treeEdges.current.update(t);
-            }
-            // }
-
-            if (Df.complete()) {
-                clearInterval(inter);
-                // console.log(nodes.current.get(), edges.current.get());
-                setFinished(true);
             }
         }, 500);
     };
