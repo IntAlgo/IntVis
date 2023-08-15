@@ -34,13 +34,16 @@ export const NavBar = ({ className }: NavBarProps) => {
                         <div
                             className="inline-flex w-full justify-center gap-x-1.5 px-2 text-lg font-semibold text-gray-900 h-full"
                             onClick={() => {
+                                if (!algoOptions) {
+                                    setModifyOptions(false);
+                                }
                                 setAlgoOptions(!algoOptions);
                             }}
                         >
                             <span
                                 className={classNames(
                                     algoOptions
-                                        ? 'my-auto py-2 px-1 rounded-md bg-slate-500'
+                                        ? 'my-auto py-2 px-1 rounded-md bg-slate-200'
                                         : 'my-auto py-2 px-1 rounded-md'
                                 )}
                             >
@@ -70,13 +73,16 @@ export const NavBar = ({ className }: NavBarProps) => {
                         <div
                             className="inline-flex w-full justify-center gap-x-1.5 px-2 text-lg font-semibold text-gray-900 h-full"
                             onClick={() => {
+                                if (!modifyOptions) {
+                                    setAlgoOptions(false);
+                                }
                                 setModifyOptions(!modifyOptions);
                             }}
                         >
                             <span
                                 className={classNames(
                                     modifyOptions
-                                        ? 'my-auto py-2 px-1 rounded-md bg-slate-500'
+                                        ? 'my-auto py-2 px-1 rounded-md bg-slate-200'
                                         : 'my-auto py-2 px-1 rounded-md'
                                 )}
                             >

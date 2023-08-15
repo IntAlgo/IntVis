@@ -58,7 +58,7 @@ let options = {
         zoomSpeed: 1,
         zoomView: true,
     },
-    physics:false,
+    physics: false,
 };
 /**
  * This component was created using Codux's Default new component template.
@@ -78,9 +78,9 @@ export const Tree = ({ className, nodes, edges }: TreeProps) => {
     useEffect(() => {
         if (finished) {
             tree_network.current?.storePositions();
-            console.log("used");
+            console.log('used');
         }
-    }, [finished])
+    }, [finished]);
     return (
         <div
             ref={visJsRef}

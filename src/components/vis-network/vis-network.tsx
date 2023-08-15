@@ -1,41 +1,41 @@
 import styles from './vis-network.module.scss';
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { DataSet, Network } from 'vis-network/standalone/esm/vis-network';
 import { DFSgraph } from '../../algorithms/DfsGraph';
 import { dataContext } from '../../context/data-context';
 import { BFSgraph } from '../../algorithms/Bfsgraph';
 import { Node, Edge } from 'vis-network/standalone/esm/vis-network';
 import { Tree } from '../tree/tree';
-import { dfEdge,dfNode } from '../../types/type';
+import { dfEdge, dfNode } from '../../types/type';
 export interface VisNetworkProps {
     className?: string;
 }
 export const VisNetwork = ({ className }: VisNetworkProps) => {
     const { mode, setFinished } = useContext(dataContext);
     let arr_node: dfNode[] = [
-        { id: 0, label: '0', is_vis: false, color: 'white' },
-        { id: 1, label: '1', is_vis: false, color: 'white' },
-        { id: 2, label: '2', is_vis: false, color: 'white' },
-        { id: 3, label: '3', is_vis: false, color: 'white' },
-        { id: 4, label: '4', is_vis: false, color: 'white' },
-        { id: 5, label: '5', is_vis: false, color: 'white' },
-        { id: 6, label: '6', is_vis: false, color: 'white' },
-        { id: 7, label: '7', is_vis: false, color: 'white' },
-        { id: 8, label: '8', is_vis: false, color: 'white' },
-        { id: 9, label: '9', is_vis: false, color: 'white' },
+        { id: 0, label: '0', is_vis: false, color: 'white', title: 'Not Visited' },
+        { id: 1, label: '1', is_vis: false, color: 'white', title: 'Not Visited' },
+        { id: 2, label: '2', is_vis: false, color: 'white', title: 'Not Visited' },
+        { id: 3, label: '3', is_vis: false, color: 'white', title: 'Not Visited' },
+        { id: 4, label: '4', is_vis: false, color: 'white', title: 'Not Visited' },
+        { id: 5, label: '5', is_vis: false, color: 'white', title: 'Not Visited' },
+        { id: 6, label: '6', is_vis: false, color: 'white', title: 'Not Visited' },
+        { id: 7, label: '7', is_vis: false, color: 'white', title: 'Not Visited' },
+        { id: 8, label: '8', is_vis: false, color: 'white', title: 'Not Visited' },
+        { id: 9, label: '9', is_vis: false, color: 'white', title: 'Not Visited' },
     ];
 
     let arr_edge: dfEdge[] = [
-        { id: 'a', from: 0, to: 2, color: 'white',in_tree: false },
-        { id: 'c', from: 1, to: 3, color: 'white',in_tree: false },
-        { id: 'd', from: 1, to: 4, color: 'white',in_tree: false },
-        { id: 'b', from: 0, to: 1, color: 'white',in_tree: false },
-        { id: 'e', from: 1, to: 5, color: 'white',in_tree: false },
-        { id: 'f', from: 2, to: 6, color: 'white',in_tree: false },
-        { id: 'g', from: 2, to: 7, color: 'white',in_tree: false },
-        { id: 'h', from: 7, to: 0, color: 'white',in_tree: false },
-        { id: 'i', from: 7, to: 9, color: 'white',in_tree: false },
-        { id: 'j', from: 4, to: 8, color: 'white',in_tree: false },
+        { id: 'a', from: 0, to: 2, color: 'white', in_tree: false },
+        { id: 'c', from: 1, to: 3, color: 'white', in_tree: false },
+        { id: 'd', from: 1, to: 4, color: 'white', in_tree: false },
+        { id: 'b', from: 0, to: 1, color: 'white', in_tree: false },
+        { id: 'e', from: 1, to: 5, color: 'white', in_tree: false },
+        { id: 'f', from: 2, to: 6, color: 'white', in_tree: false },
+        { id: 'g', from: 2, to: 7, color: 'white', in_tree: false },
+        { id: 'h', from: 7, to: 0, color: 'white', in_tree: false },
+        { id: 'i', from: 7, to: 9, color: 'white', in_tree: false },
+        { id: 'j', from: 4, to: 8, color: 'white', in_tree: false },
     ];
     let nodes = useRef(new DataSet(arr_node));
     let edges = useRef(new DataSet(arr_edge));
@@ -86,7 +86,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             navigationButtons: false,
             selectable: true,
             selectConnectedEdges: true,
-            tooltipDelay: 300,
+            tooltipDelay: 50,
             zoomSpeed: 1,
             zoomView: true,
         },
@@ -96,7 +96,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             forceAtlas2Based: {
                 springLength: 20,
                 springConstant: 0.2,
-                damping: 0.9,
+                damping: 0.8,
                 centralGravity: 0.01,
             },
         },
@@ -144,7 +144,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
     };
     let resetGraph = async () => {
         nodes.current.forEach((_, id) => {
-            nodes.current.update({ id: id, color: 'white', is_vis: false });
+            nodes.current.update({ id: id, color: 'white', is_vis: false, title: 'Not Visited' });
         });
         edges.current.forEach((_, id: any) => {
             edges.current.update({ id: id, color: 'white' });
@@ -156,58 +156,77 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
     // dfs algo
     const startDFS = (e: any) => {
         setFinished(false);
-        const Df = new DFSgraph(
-            edges.current.get(),
-            nodes.current.get(),
-            e['nodes'][0]
-        );
+        let counter = 0;
+        const Df = new DFSgraph(edges.current.get(), nodes.current.get(), e['nodes'][0]);
         let inter = setInterval(() => {
             if (Df.complete()) {
                 clearInterval(inter);
                 setFinished(true);
-                
-                let f=()=>{
-                    console.log(treeNodes.current.get());
-                    edges.current.forEach((e)=>{
-                    treeEdges.current.add(e);
-                },{filter:(e)=>{return !e.in_tree}})
+
+                let f = async () => {
+                    // console.log(treeNodes.current.get());
+                    await treeNodes.current.update(
+                        treeNodes.current.map((e) => {
+                            return { ...e, fixed: true };
+                        })
+                    );
+                    edges.current.forEach(
+                        (e) => {
+                            treeEdges.current.add(e);
+                        },
+                        {
+                            filter: (e) => {
+                                return !e.in_tree;
+                            },
+                        }
+                    );
+                };
+                f();
+                // setTimeout(f, 500);
+                // setTimeout(()=>console.log(treeNodes.current.get()),1000);
             }
-            treeNodes.current.update(treeNodes.current.map((e)=>{
-                return {...e,fixed: { x: true , y: true }}
-            }));
-            setTimeout(f,500);
-            // setTimeout(()=>console.log(treeNodes.current.get()),1000);
-        }
             let x = Df.next();
-            if(x===null){
+            if (x === null) {
                 clearInterval(inter);
                 return;
             }
             nodes.current.update({ id: x?.node, color: 'orange' });
             if (x?.edgeId === null) {
+                nodes.current.update({ id: x?.node, color: 'orange', title: 'Iteration: 0' });
                 treeNodes.current.update({ id: x?.node, label: `${x?.node}`, level: 0 });
+                counter++;
                 return;
-            } else  {
-                edges.current.update({ id: x?.edgeId, color: 'orange',in_tree: true });
+            } else {
+                edges.current.update({ id: x?.edgeId, color: 'orange', in_tree: true });
                 let t: any = edges.current.get(x?.edgeId);
                 let t2: any = treeNodes.current.get(t.from);
                 let lev = t2 ? t2.level : 0;
-
+                nodes.current.update({
+                    id: x?.node,
+                    color: 'orange',
+                    title: `Iteration: ${counter}`,
+                });
+                counter++;
                 treeNodes.current.update({ id: x?.node, label: `${x?.node}`, level: lev + 1 });
                 treeEdges.current.update(t);
             }
-        }, 500);
+        }, 1000);
     };
 
     // bfs algo
     const startBFS = (e: any) => {
         setFinished(false);
-        const Df = new BFSgraph(edges.current.get(), nodes.current.get(), e['nodes'][0]);
+        let counter = 0;
+        const Bf = new BFSgraph(edges.current.get(), nodes.current.get(), e['nodes'][0]);
         let inter = setInterval(() => {
-            let x = Df.next();
-            // console.log(x);
-            nodes.current.update({ id: x?.node, color: 'orange' });
+            let x = Bf.next();
+            if (x === null) {
+                clearInterval(inter);
+                return;
+            }
             if (x?.edgeId === null) {
+                nodes.current.update({ id: x?.node, color: 'orange', title: 'Iteration: 0' });
+                counter++;
                 treeNodes.current.update({ id: x?.node, label: `${x?.node}`, level: 0, size: 30 });
                 return;
             } else {
@@ -215,11 +234,17 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
                 let t: any = edges.current.get(x?.edgeId);
                 let t2: any = treeNodes.current.get(t.from);
                 let lev = t2 ? t2.level : 0;
+                nodes.current.update({
+                    id: x?.node,
+                    color: 'orange',
+                    title: `Iteration: ${counter}`,
+                });
+                counter++;
                 treeNodes.current.update({ id: x?.node, label: `${x?.node}`, level: lev + 1 });
                 treeEdges.current.update(t);
             }
 
-            if (Df.complete()) {
+            if (Bf.complete()) {
                 clearInterval(inter);
                 setFinished(true);
             }
@@ -259,7 +284,10 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
     }, [visJsRef, mode]);
     return (
         <div className="w-full h-full">
-            <div className="h-full my-1 flex justify-between">
+            <div className="h-full mx-1 my-3 flex justify-between">
+                {/* <div className="absolute bg-white border-[1px] border-black py-2 px-3 text-[20px] font-semibold rounded-md">
+                    hello
+                </div> */}
                 <div
                     ref={visJsRef}
                     className="rounded-md overflow-hidden h-full z-3 w-[48%] bg-cyan-800 mx-auto"
