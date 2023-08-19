@@ -1,4 +1,3 @@
-import styles from './vis-network.module.scss';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { DataSet, Network } from 'vis-network/standalone/esm/vis-network';
 import { DFSgraph } from '../../algorithms/DfsGraph';
@@ -6,23 +5,27 @@ import { dataContext } from '../../context/data-context';
 import { BFSgraph } from '../../algorithms/Bfsgraph';
 import { Node, Edge } from 'vis-network/standalone/esm/vis-network';
 import { Tree } from '../tree/tree';
-import { dfEdge, dfNode} from '../../types/type';
+import { dfEdge, dfNode } from '../../types/type';
+import TraversalArray from '../../utils/TraversalArray';
+
 export interface VisNetworkProps {
     className?: string;
 }
 export const VisNetwork = ({ className }: VisNetworkProps) => {
     const { mode, setFinished } = useContext(dataContext);
+    const [traversalArray, setTraversalArray]: [any, any] = useState(null);
+
     let arr_node: dfNode[] = [
-        { id: 0, label: '0', is_vis: false, color: 'white', title: 'Not Visited' },
-        { id: 1, label: '1', is_vis: false, color: 'white', title: 'Not Visited' },
-        { id: 2, label: '2', is_vis: false, color: 'white', title: 'Not Visited' },
-        { id: 3, label: '3', is_vis: false, color: 'white', title: 'Not Visited' },
-        { id: 4, label: '4', is_vis: false, color: 'white', title: 'Not Visited' },
-        { id: 5, label: '5', is_vis: false, color: 'white', title: 'Not Visited' },
-        { id: 6, label: '6', is_vis: false, color: 'white', title: 'Not Visited' },
-        { id: 7, label: '7', is_vis: false, color: 'white', title: 'Not Visited' },
-        { id: 8, label: '8', is_vis: false, color: 'white', title: 'Not Visited' },
-        { id: 9, label: '9', is_vis: false, color: 'white', title: 'Not Visited' },
+        { id: 0, label: '0', is_vis: false, color: 'white', title: '-1' },
+        { id: 1, label: '1', is_vis: false, color: 'white', title: '-1' },
+        { id: 2, label: '2', is_vis: false, color: 'white', title: '-1' },
+        { id: 3, label: '3', is_vis: false, color: 'white', title: '-1' },
+        { id: 4, label: '4', is_vis: false, color: 'white', title: '-1' },
+        { id: 5, label: '5', is_vis: false, color: 'white', title: '-1' },
+        { id: 6, label: '6', is_vis: false, color: 'white', title: '-1' },
+        { id: 7, label: '7', is_vis: false, color: 'white', title: '-1' },
+        { id: 8, label: '8', is_vis: false, color: 'white', title: '-1' },
+        { id: 9, label: '9', is_vis: false, color: 'white', title: '-1' },
     ];
 
     let arr_edge: dfEdge[] = [
@@ -37,10 +40,11 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         { id: 'i', from: 7, to: 9, color: 'white', in_tree: false },
         { id: 'j', from: 4, to: 8, color: 'white', in_tree: false },
     ];
-    let nodes = useRef(new DataSet(arr_node));
+    let nodes: React.MutableRefObject<DataSet<dfNode, 'id'>> = useRef(new DataSet(arr_node));
     let edges = useRef(new DataSet(arr_edge));
     let treeNodes: React.MutableRefObject<DataSet<dfNode, 'id'>> = useRef(new DataSet());
     let treeEdges: React.MutableRefObject<DataSet<Edge, 'id'>> = useRef(new DataSet());
+
     let options = {
         autoResize: true,
         layout: {
@@ -144,8 +148,9 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
     };
     let resetGraph = async () => {
         nodes.current.forEach((_, id) => {
-            nodes.current.update({ id: id, color: 'white', is_vis: false, title: 'Not Visited' });
+            nodes.current.update({ id: id, color: 'white', is_vis: false, title: '-1' });
         });
+        setTraversalArray(nodes.current.get());
         edges.current.forEach((_, id: any) => {
             edges.current.update({ id: id, color: 'white' });
         });
@@ -164,9 +169,9 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
                 clearInterval(inter);
                 setFinished(true);
 
-                let f = async () => {
+                let f = () => {
                     // console.log(treeNodes.current.get());
-                    await treeNodes.current.update(
+                    treeNodes.current.update(
                         treeNodes.current.map((e) => {
                             return { ...e, fixed: true };
                         })
@@ -227,10 +232,16 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
                 clearInterval(inter);
                 return;
             }
+
             nodes.current.update({ id: x?.node, color: 'orange' });
             if (x?.edgeId === null) {
-                nodes.current.update({ id: x?.node, color: 'orange', title: 'Iteration: 0' });
-                treeNodes.current.update({ id: x?.node, color:'blue', label: `${x?.node}`, level: 0});
+                nodes.current.update({ id: x?.node, color: 'orange', title: '0' });
+                setTraversalArray(nodes.current.get());
+                treeNodes.current.update({
+                    id: x?.node, color:'blue',
+                    label: `${x?.node}`,
+                    level: 0
+               });
                 counter++;
                 return;
             } else {
@@ -241,10 +252,15 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
                 nodes.current.update({
                     id: x?.node,
                     color: 'orange',
-                    title: `Iteration: ${counter}`,
+                    title: `${counter}`,
                 });
+                setTraversalArray(nodes.current.get());
                 counter++;
-                treeNodes.current.update({ id: x?.node, color:'blue', label: `${x?.node}`, level: lev + 1 });
+                treeNodes.current.update({
+                    id: x?.node, color:'blue',
+                    label: `${x?.node}`,
+                    level: lev + 1
+                });
                 treeEdges.current.update(t);
             }
         }, 1000);
@@ -262,7 +278,8 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
                 return;
             }
             if (x?.edgeId === null) {
-                nodes.current.update({ id: x?.node, color: 'orange', title: 'Iteration: 0' });
+                nodes.current.update({ id: x?.node, color: 'orange', title: '0' });
+                setTraversalArray(nodes.current.get());
                 counter++;
                 treeNodes.current.update({ id: x?.node, label: `${x?.node}`, level: 0, size: 30 });
                 return;
@@ -274,8 +291,9 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
                 nodes.current.update({
                     id: x?.node,
                     color: 'orange',
-                    title: `Iteration: ${counter}`,
+                    title: `${counter}`,
                 });
+                setTraversalArray(nodes.current.get());
                 counter++;
                 treeNodes.current.update({ id: x?.node, label: `${x?.node}`, level: lev + 1 });
                 treeEdges.current.update(t);
@@ -322,13 +340,11 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
     return (
         <div className="w-full h-full">
             <div className="h-full mx-1 my-3 flex justify-between">
-                {/* <div className="absolute bg-white border-[1px] border-black py-2 px-3 text-[20px] font-semibold rounded-md">
-                    hello
-                </div> */}
+                <TraversalArray traversalArray={traversalArray} />
                 <div
                     ref={visJsRef}
                     className="rounded-md overflow-hidden h-full z-3 w-[48%] bg-cyan-800 mx-auto"
-                ></div>
+                />
                 <Tree nodes={treeNodes} edges={treeEdges} />
             </div>
         </div>
