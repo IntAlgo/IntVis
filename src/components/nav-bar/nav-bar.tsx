@@ -52,7 +52,7 @@ export const NavBar = ({ className }: NavBarProps) => {
                         </div>
                         {algoOptions && (
                             <div className="absolute left-0 z-10 w-56 origin-top-right rounded-t-none rounded-b-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none transition-all ease-in duration-500">
-                                <div>
+                                <div className='cursor-pointer'>
                                     {AlgorithmsList.map((item, index) => {
                                         return (
                                             <NavButton
@@ -62,6 +62,7 @@ export const NavBar = ({ className }: NavBarProps) => {
                                                 setState={setMode}
                                                 setClose={setAlgoOptions}
                                                 desiredState={item}
+                                            
                                             />
                                         );
                                     })}

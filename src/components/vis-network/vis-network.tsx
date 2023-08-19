@@ -6,7 +6,7 @@ import { dataContext } from '../../context/data-context';
 import { BFSgraph } from '../../algorithms/Bfsgraph';
 import { Node, Edge } from 'vis-network/standalone/esm/vis-network';
 import { Tree } from '../tree/tree';
-import { dfEdge, dfNode } from '../../types/type';
+import { dfEdge, dfNode} from '../../types/type';
 export interface VisNetworkProps {
     className?: string;
 }
@@ -158,6 +158,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         setFinished(false);
         let counter = 0;
         const Df = new DFSgraph(edges.current.get(), nodes.current.get(), e['nodes'][0]);
+
         let inter = setInterval(() => {
             if (Df.complete()) {
                 clearInterval(inter);
@@ -186,6 +187,42 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
                 // setTimeout(()=>console.log(treeNodes.current.get()),1000);
             }
             let x = Df.next();
+            if(Df.currnode!==null)
+            {
+                let curr=Df.currnode;
+                treeNodes.current.updateOnly({ id: curr?.node, color: 'white'});
+            }
+            console.log("your currnode was is ");
+            if(Df.currnode!==null)
+            console.log(Df.currnode.node);
+
+            console.log("parent of df.next is");
+            if(x!==null)
+            console.log(x.parent);
+
+            if(Df.currnode!==null&&x!==null)
+            {
+                if(Df.currnode.node!==x.parent)
+                {
+                    let f=treeNodes.current.get( x.parent);
+                    console.log(f);
+                    treeNodes.current.update({ id: x.parent, color: 'blue'});
+                    setTimeout(() => {
+                        console.log("thoda wait karle bhai");
+                        treeNodes.current.update({ id: x.parent, color: 'white'});
+                        
+                    }, 1000);
+                }
+            }
+            
+            
+            Df.currnode=x;
+            // if(x!==null)
+            // {
+            //     let curr=Df.currnode;
+            //     treeNodes.current.update({ id: curr?.node, color: 'blue'});
+            // }
+            // console.log(Df.currnode);
             if (x === null) {
                 clearInterval(inter);
                 return;
@@ -193,7 +230,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             nodes.current.update({ id: x?.node, color: 'orange' });
             if (x?.edgeId === null) {
                 nodes.current.update({ id: x?.node, color: 'orange', title: 'Iteration: 0' });
-                treeNodes.current.update({ id: x?.node, label: `${x?.node}`, level: 0 });
+                treeNodes.current.update({ id: x?.node, color:'blue', label: `${x?.node}`, level: 0});
                 counter++;
                 return;
             } else {
@@ -207,7 +244,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
                     title: `Iteration: ${counter}`,
                 });
                 counter++;
-                treeNodes.current.update({ id: x?.node, label: `${x?.node}`, level: lev + 1 });
+                treeNodes.current.update({ id: x?.node, color:'blue', label: `${x?.node}`, level: lev + 1 });
                 treeEdges.current.update(t);
             }
         }, 1000);
