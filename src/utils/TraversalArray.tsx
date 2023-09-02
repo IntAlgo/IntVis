@@ -10,7 +10,7 @@ const TraversalArray = ({ traversalArray }: PropsWithRef<traversalArray>) => {
         return <></>;
     }
     return (
-        <div className="ml-4 absolute h-fit bg-white rounded-md border-black border-2 w-md overflow-x-scroll flex">
+        <div className="ml-4 absolute h-fit bg-white rounded-md border-black border-2 w-md overflow-x-scroll flex z-10">
             <div className="grid grid-rows-2 gap-1 px-2 py-1">
                 <div className="row-span-1 h-[25px]">Vertex</div>
                 <hr />

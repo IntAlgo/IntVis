@@ -162,108 +162,113 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
     const startDFS = (e: any) => {
         setFinished(false);
         let counter = 0;
+        let flag = false;
         const Df = new DFSgraph(edges.current.get(), nodes.current.get(), e['nodes'][0]);
 
-        let inter = setInterval(() => {
-            if (Df.complete()) {
-                clearInterval(inter);
-                setFinished(true);
+        let inter = setInterval(
+            () => {
+                console.log(flag);
+                flag = false;
+                if (Df.complete()) {
+                    clearInterval(inter);
+                    setFinished(true);
 
-                let f = () => {
-                    // console.log(treeNodes.current.get());
-                    treeNodes.current.update(
-                        treeNodes.current.map((e) => {
-                            return { ...e, fixed: true };
-                        })
-                    );
-                    edges.current.forEach(
-                        (e) => {
-                            treeEdges.current.add(e);
-                        },
-                        {
-                            filter: (e) => {
-                                return !e.in_tree;
+                    let f = () => {
+                        treeNodes.current.update(
+                            treeNodes.current.map((e) => {
+                                return { ...e, fixed: true };
+                            })
+                        );
+                        edges.current.forEach(
+                            (e) => {
+                                treeEdges.current.add(e);
                             },
-                        }
-                    );
-                };
-                f();
-                // setTimeout(f, 500);
-                // setTimeout(()=>console.log(treeNodes.current.get()),1000);
-            }
-            let x = Df.next();
-            if(Df.currnode!==null)
-            {
-                let curr=Df.currnode;
-                treeNodes.current.updateOnly({ id: curr?.node, color: 'white'});
-            }
-            console.log("your currnode was is ");
-            if(Df.currnode!==null)
-            console.log(Df.currnode.node);
-
-            console.log("parent of df.next is");
-            if(x!==null)
-            console.log(x.parent);
-
-            if(Df.currnode!==null&&x!==null)
-            {
-                if(Df.currnode.node!==x.parent)
-                {
-                    let f=treeNodes.current.get( x.parent);
-                    console.log(f);
-                    treeNodes.current.update({ id: x.parent, color: 'blue'});
-                    setTimeout(() => {
-                        console.log("thoda wait karle bhai");
-                        treeNodes.current.update({ id: x.parent, color: 'white'});
-                        
-                    }, 1000);
+                            {
+                                filter: (e) => {
+                                    return !e.in_tree;
+                                },
+                            }
+                        );
+                    };
+                    f();
                 }
-            }
-            
-            
-            Df.currnode=x;
-            // if(x!==null)
-            // {
-            //     let curr=Df.currnode;
-            //     treeNodes.current.update({ id: curr?.node, color: 'blue'});
-            // }
-            // console.log(Df.currnode);
-            if (x === null) {
-                clearInterval(inter);
-                return;
-            }
+                let x = Df.next();
+                if (Df.currnode !== null) {
+                    let curr = Df.currnode;
+                    treeNodes.current.updateOnly({ id: curr?.node, color: 'white' });
+                }
+                console.log('your currnode was is ');
+                if (Df.currnode !== null) console.log(Df.currnode.node);
 
-            nodes.current.update({ id: x?.node, color: 'orange' });
-            if (x?.edgeId === null) {
-                nodes.current.update({ id: x?.node, color: 'orange', title: '0' });
-                setTraversalArray(nodes.current.get());
-                treeNodes.current.update({
-                    id: x?.node, color:'blue',
-                    label: `${x?.node}`,
-                    level: 0
-               });
-                counter++;
-                return;
-            } else {
-                edges.current.update({ id: x?.edgeId, color: 'orange', in_tree: true });
-                let t: any = edges.current.get(x?.edgeId);
-                let t2: any = treeNodes.current.get(t.from);
-                let lev = t2 ? t2.level : 0;
-                nodes.current.update({
-                    id: x?.node,
-                    color: 'orange',
-                    title: `${counter}`,
-                });
-                setTraversalArray(nodes.current.get());
-                counter++;
-                treeNodes.current.update({
-                    id: x?.node, color:'blue',
-                    label: `${x?.node}`,
-                    level: lev + 1
-                });
-                treeEdges.current.update(t);
-            }
-        }, 1000);
+                Df.currnode = x;
+                if (x === null) {
+                    clearInterval(inter);
+                    return;
+                }
+
+                if (x?.edgeId === null) {
+                    nodes.current.update({ id: x?.node, color: 'orange', title: '0' });
+                    setTraversalArray(nodes.current.get());
+                    treeNodes.current.update({
+                        id: x?.node,
+                        color: 'blue',
+                        label: `${x?.node}`,
+                        level: 0,
+                    });
+                    counter++;
+                    return;
+                } else {
+                    if (Df.currnode.node !== x.parent) {
+                        let f = treeNodes.current.get(x.parent);
+                        console.log(f);
+                        flag = true;
+                        treeNodes.current.update({ id: x.parent, color: 'blue' });
+                        setTimeout(() => {
+                            // console.log('thoda wait karle bhai');
+                            edges.current.update({ id: x?.edgeId, color: 'orange', in_tree: true });
+                            let t: any = edges.current.get(x?.edgeId);
+                            let t2: any = treeNodes.current.get(t.from);
+                            let lev = t2 ? t2.level : 0;
+                            nodes.current.update({
+                                id: x?.node,
+                                color: 'orange',
+                                title: `${counter}`,
+                            });
+                            setTraversalArray(nodes.current.get());
+                            counter++;
+                            treeNodes.current.update({ id: x.parent, color: 'white' });
+                            treeNodes.current.update({
+                                id: x?.node,
+                                color: 'blue',
+                                label: `${x?.node}`,
+                                level: lev + 1,
+                            });
+                            treeEdges.current.update(t);
+                        }, 500);
+                    } else {
+                        edges.current.update({ id: x?.edgeId, color: 'orange', in_tree: true });
+                        let t: any = edges.current.get(x?.edgeId);
+                        let t2: any = treeNodes.current.get(t.from);
+                        let lev = t2 ? t2.level : 0;
+                        nodes.current.update({
+                            id: x?.node,
+                            color: 'orange',
+                            title: `${counter}`,
+                        });
+                        setTraversalArray(nodes.current.get());
+                        counter++;
+                        treeNodes.current.update({
+                            id: x?.node,
+                            color: 'blue',
+                            label: `${x?.node}`,
+                            level: lev + 1,
+                        });
+                        treeEdges.current.update(t);
+                    }
+                }
+            },
+            flag ? 3000 : 1000
+        );
     };
 
     // bfs algo
