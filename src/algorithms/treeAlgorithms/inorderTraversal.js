@@ -33,9 +33,6 @@ export class BinaryTreeInorderTraversal {
 
             let rightChild = this.adj[this.curr].find(edge => edge.childpoint === ChildDirection.RIGHT);
             this.curr = rightChild ? rightChild.node : null;
-            console.log(`node is ${node}`);
-            console.log(`edgeId is ${edgeId}`);
-            console.log(`parent is ${parent}`);
             return { node: node, edgeId: edgeId, parent: parent };
         }
 

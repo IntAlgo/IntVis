@@ -23,9 +23,6 @@ export class BinaryTreePreorderTraversal {
         if (this.stack.length === 0) return null;
 
         let { node, edgeId, parent } = this.stack.pop();
-        // Destructure the node and edgeId
-        console.log(`node is ${node}`);
-        console.log(this.nodes[node].is_vis);
         if (!this.nodes[node].is_vis) {
             this.nodes[node].is_vis = true;
             for(let i = 0; i < this.adj[node].length; i++){

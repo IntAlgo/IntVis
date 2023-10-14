@@ -3,10 +3,8 @@ import { DataSet, Network } from 'vis-network/standalone/esm/vis-network';
 // import { DFSgraph } from '../../algorithms/DfsGraph';
 import { BinaryTreePreorderTraversal } from '../../algorithms/treeAlgorithms/preorderTraversal';
 import { BinaryTreeInorderTraversal } from '../../algorithms/treeAlgorithms/inorderTraversal';
+import { BinaryTreePostorderTraversal } from '../../algorithms/treeAlgorithms/postorderTraversal';
 import { dataContext } from '../../context/data-context';
-import { BFSgraph } from '../../algorithms/Bfsgraph';
-import { Node, Edge } from 'vis-network/standalone/esm/vis-network';
-import { Tree } from '../tree/tree';
 // import { dfEdge, dfNode, binTreeEdge, ChildDirection } from '../../types/type';
 import { dfNode, binTreeEdge } from '../../types/type';
 import { ChildDirection } from '../../types/enums';
@@ -18,6 +16,8 @@ export interface VisNetworkProps {
 export const Binary_tree = ({ className }: VisNetworkProps) => {
     const { mode, setFinished } = useContext(dataContext);
     const [traversalArray, setTraversalArray]: [any, any] = useState(null);
+    const [traversalMode, setTraversalMode] = useState(false);
+    const nextButtonRef = useRef<HTMLButtonElement>(null);
 
     let arr_node: dfNode[] = [
         { id: 0, label: '0', is_vis: false, color: 'white', title: '-1' },
@@ -189,23 +189,34 @@ export const Binary_tree = ({ className }: VisNetworkProps) => {
         edges.current.forEach((_, id: any) => {
             edges.current.update({ id: id, color: 'white' });
         });
+        setTraversalMode(false);
+        return;
     };
 
-    const preorder = (e: any) => {
+    //traversal
+    const traversal = ({ e, mode }: { e: any; mode: String }) => {
         console.log(e);
         setFinished(false);
         let counter = 0;
         let flag = false;
-        const Df = new BinaryTreePreorderTraversal(edges.current.get(), nodes.current.get(), 0);
+        let Df: any = null;
+        if (mode === 'inorder') {
+            Df = new BinaryTreeInorderTraversal(edges.current.get(), nodes.current.get(), 0);
+        } else if (mode === 'preorder') {
+            Df = new BinaryTreePreorderTraversal(edges.current.get(), nodes.current.get(), 0);
+        } else if (mode === 'postorder') {
+            Df = new BinaryTreePostorderTraversal(edges.current.get(), nodes.current.get(), 0);
+        }
 
         let inter = setInterval(
             () => {
                 console.log(counter);
-                console.log(flag);
                 flag = false;
                 if (Df.complete()) {
+                    console.log('complete');
                     clearInterval(inter);
                     setFinished(true);
+                    return;
                 }
                 let x = Df.next();
                 if (Df.currnode !== null) {
@@ -213,96 +224,108 @@ export const Binary_tree = ({ className }: VisNetworkProps) => {
                 }
 
                 Df.currnode = x;
-                if (x === null) {
-                    clearInterval(inter);
-                    return;
-                }
 
-                if (x?.edgeId === null) {
+                if (x?.node === null) {
                     nodes.current.update({ id: x?.node, color: 'orange', title: '0' });
                     setTraversalArray(nodes.current.get());
-                    counter++;
                 } else {
-                    edges.current.update({ id: x?.edgeId, color: 'orange', in_tree: true });
-                    let t: any = edges.current.get(x?.edgeId);
+                    // edges.current.update({ id: x?.edgeId, color: 'orange', in_tree: true });
+                    // edges.current.update({ id: x?.edgeId, color: 'orange', in_tree: true });
+                    // let t: any = edges.current.get(x?.edgeId);
                     nodes.current.update({
                         id: x?.node,
                         color: 'orange',
                         title: `${counter}`,
                     });
+                    console.log(nodes.current.get());
                     setTraversalArray(nodes.current.get());
-                    counter++;
                 }
+                counter++;
             },
             flag ? 3000 : 1000
         );
     };
 
-    //indorder traversal
-    const inorder = (e: any) => {
-        console.log(e);
-        setFinished(false);
-        let counter = 0;
-        let flag = false;
-        const Df = new BinaryTreeInorderTraversal(edges.current.get(), nodes.current.get(), 0);
+    class traversalm {
+        constructor({ e, mode }: { e: any; mode: String }) {
+            this.e = e;
+            this.mode = mode;
+            this.counter = 0;
+            this.flag = false;
+            this.Df =
+                mode === 'preorder'
+                    ? new BinaryTreePreorderTraversal(edges.current.get(), nodes.current.get(), 0)
+                    : mode === 'inorder'
+                    ? new BinaryTreeInorderTraversal(edges.current.get(), nodes.current.get(), 0)
+                    : new BinaryTreePostorderTraversal(edges.current.get(), nodes.current.get(), 0);
+        }
+        e: any;
+        mode: String;
+        counter: number;
+        flag: Boolean;
+        Df: any;
 
-        let inter = setInterval(
-            () => {
-                console.log(counter);
-                console.log(flag);
-                flag = false;
-                if (Df.complete()) {
-                    clearInterval(inter);
-                    setFinished(true);
-                }
-                let x = Df.next();
-                if (Df.currnode !== null) {
-                    let curr = Df.currnode;
-                }
+        next() {
+            console.log(this.counter);
+            this.flag = false;
+            if (this.Df.complete()) {
+                console.log('complete');
+                setFinished(true);
+                setTraversalMode(false);
+                return;
+            }
+            let x = this.Df.next();
+            if (this.Df.currnode !== null) {
+                let curr = this.Df.currnode;
+            }
 
-                Df.currnode = x;
-                if (x === null) {
-                    clearInterval(inter);
-                    return;
-                }
+            this.Df.currnode = x;
 
-                if (x?.edgeId === null) {
-                    nodes.current.update({ id: x?.node, color: 'orange', title: '0' });
-                    setTraversalArray(nodes.current.get());
-                    counter++;
-                } else {
-                    edges.current.update({ id: x?.edgeId, color: 'orange', in_tree: true });
-                    edges.current.update({ id: x?.edgeId, color: 'orange', in_tree: true });
-                    let t: any = edges.current.get(x?.edgeId);
-                    nodes.current.update({
-                        id: x?.node,
-                        color: 'orange',
-                        title: `${counter}`,
-                    });
-                    setTraversalArray(nodes.current.get());
-                    counter++;
-                }
-            },
-            flag ? 3000 : 1000
-        );
-    };
+            if (x?.node === null) {
+                nodes.current.update({ id: x?.node, color: 'orange', title: '0' });
+                setTraversalArray(nodes.current.get());
+            } else {
+                // edges.current.update({ id: x?.edgeId, color: 'orange', in_tree: true });
+                // edges.current.update({ id: x?.edgeId, color: 'orange', in_tree: true });
+                // let t: any = edges.current.get(x?.edgeId);
+                nodes.current.update({
+                    id: x?.node,
+                    color: 'orange',
+                    title: `${this.counter}`,
+                });
+                console.log(nodes.current.get());
+                setTraversalArray(nodes.current.get());
+            }
+            this.counter = this.counter + 1;
+            return;
+        }
+    }
 
     let funce = async () => {
         network.current?.disableEditMode();
-        // network.current?.addE
         network.current?.off('click');
         network.current?.off('selectNode');
         network.current?.unselectAll();
         if (mode === 'preorder') {
-            console.log('preorder');
             await resetGraph();
+            setTraversalMode(true);
             network.current?.setOptions({ physics: { enabled: true } });
-            preorder(network.current);
+            let t = new traversalm({ e: network.current, mode: 'preorder' });
+            nextButtonRef.current?.addEventListener('click', () => {
+                t.next();
+            });
         }
         if (mode === 'inorder') {
             await resetGraph();
+            setTraversalMode(true);
             network.current?.setOptions({ physics: { enabled: true } });
-            inorder(network.current);
+            traversal({ e: network.current, mode: 'inorder' });
+        }
+        if (mode === 'postorder') {
+            await resetGraph();
+            setTraversalMode(true);
+            network.current?.setOptions({ physics: { enabled: true } });
+            traversal({ e: network.current, mode: 'postorder' });
         }
         if (mode === 'reset') resetGraph();
     };
@@ -316,7 +339,10 @@ export const Binary_tree = ({ className }: VisNetworkProps) => {
     return (
         <div className="w-full h-full">
             <div className="h-full mx-1 my-3 flex justify-between">
-                <TraversalArray traversalArray={traversalArray} />
+                <div>
+                    <TraversalArray traversalArray={traversalArray} />
+                    <button ref={nextButtonRef}>next</button>
+                </div>
                 <div
                     ref={visJsRef}
                     className="rounded-md overflow-hidden h-full z-3 w-[98%] bg-cyan-800 mx-auto"
