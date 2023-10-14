@@ -39,6 +39,9 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         { id: 'h', from: 7, to: 0, color: 'white', in_tree: false },
         { id: 'i', from: 7, to: 9, color: 'white', in_tree: false },
         { id: 'j', from: 4, to: 8, color: 'white', in_tree: false },
+        // { id: 'f', from: 6, to: 2, color: 'white', in_tree: false },
+        // { id: 'k', from: 0, to: 6, color: 'white', in_tree: false },
+        // { id: 'l', from: 6, to: 8, color: 'white', in_tree: false },
     ];
     let nodes: React.MutableRefObject<DataSet<dfNode, 'id'>> = useRef(new DataSet(arr_node));
     let edges = useRef(new DataSet(arr_edge));
@@ -133,7 +136,6 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
     };
 
     const addfn = (e: any) => {
-        console.log(e);
         let se_node = {
             id: i.current,
             label: `${i.current}`,
@@ -163,14 +165,13 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         setFinished(false);
         let counter = 0;
         const Df = new DFSgraph(edges.current.get(), nodes.current.get(), e['nodes'][0]);
-
         let inter = setInterval(() => {
             if (Df.complete()) {
+                console.log("your tree is finished");
                 clearInterval(inter);
                 setFinished(true);
-
                 let f = () => {
-                    // console.log(treeNodes.current.get());
+                    console.log(treeNodes);
                     treeNodes.current.update(
                         treeNodes.current.map((e) => {
                             return { ...e, fixed: true };
@@ -197,23 +198,23 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
                 let curr=Df.currnode;
                 treeNodes.current.updateOnly({ id: curr?.node, color: 'white'});
             }
-            console.log("your currnode was is ");
+            // console.log("your currnode was is ");
             if(Df.currnode!==null)
-            console.log(Df.currnode.node);
+            // console.log(Df.currnode.node);
 
-            console.log("parent of df.next is");
+            // console.log("parent of df.next is");
             if(x!==null)
-            console.log(x.parent);
+            // console.log(x.parent);
 
             if(Df.currnode!==null&&x!==null)
             {
                 if(Df.currnode.node!==x.parent)
                 {
                     let f=treeNodes.current.get( x.parent);
-                    console.log(f);
+                    // console.log(f);
                     treeNodes.current.update({ id: x.parent, color: 'blue'});
                     setTimeout(() => {
-                        console.log("thoda wait karle bhai");
+                        // console.log("thoda wait karle bhai");
                         treeNodes.current.update({ id: x.parent, color: 'white'});
                         
                     }, 1000);
