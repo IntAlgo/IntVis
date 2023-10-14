@@ -120,6 +120,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             },
         },
     };
+
     let i = useRef(10);
     let network = useRef<Network | null>(null);
     const visJsRef = useRef<HTMLDivElement>(null);
@@ -133,7 +134,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
     };
 
     const addfn = (e: any) => {
-        console.log(e);
+        // console.log(e);
         let se_node = {
             id: i.current,
             label: `${i.current}`,
@@ -167,7 +168,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
 
         let inter = setInterval(
             () => {
-                console.log(flag);
+                // console.log(flag);
                 flag = false;
                 if (Df.complete()) {
                     clearInterval(inter);
@@ -197,8 +198,8 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
                     let curr = Df.currnode;
                     treeNodes.current.updateOnly({ id: curr?.node, color: 'white' });
                 }
-                console.log('your currnode was is ');
-                if (Df.currnode !== null) console.log(Df.currnode.node);
+                // console.log('your currnode was is ');
+                // if (Df.currnode !== null) console.log(Df.currnode.node);
 
                 Df.currnode = x;
                 if (x === null) {
@@ -220,7 +221,7 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
                 } else {
                     if (Df.currnode.node !== x.parent) {
                         let f = treeNodes.current.get(x.parent);
-                        console.log(f);
+                        // console.log(f);
                         flag = true;
                         treeNodes.current.update({ id: x.parent, color: 'blue' });
                         setTimeout(() => {

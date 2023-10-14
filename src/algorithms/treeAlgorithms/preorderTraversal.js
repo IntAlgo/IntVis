@@ -1,18 +1,20 @@
-export class DFSgraph {
-    constructor(edges, nodes, startnodeId) {
+import { ChildDirection } from "../../types/enums";
+
+export class BinaryTreePreorderTraversal {
+    constructor(edges, nodes, root) {
         this.adj = Array.from({ length: nodes.length }, () => []);
         this.edges = edges; // Store the edges
         this.edgeMap = new Map(); // Map to store edge ID based on from and to nodes
 
         for (let i = 0; i < edges.length; i++) {
-            const { from, to } = edges[i];
-            this.adj[from].push({ node: to, edgeId: edges[i].id }); // Store node and edgeId in adjacency list
+            const { from, to, childpoint } = edges[i];
+            this.adj[from].push({ node: to, edgeId: edges[i].id, childpoint:childpoint }); // Store node and edgeId in adjacency list
             this.edgeMap.set(`${from}-${to}`, edges[i].id); // Store the edge ID in the map
         }
 
         this.currnode = null;
         this.prevnode = null;
-        this.startNode = startnodeId;
+        this.startNode = root;
         this.nodes = nodes;
         this.stack = [];
         this.stack.push({ node: this.startNode, edgeId: null, parent: null }); // Store the edgeId as well
@@ -26,13 +28,17 @@ export class DFSgraph {
         console.log(this.nodes[node].is_vis);
         if (!this.nodes[node].is_vis) {
             this.nodes[node].is_vis = true;
+            for(let i = 0; i < this.adj[node].length; i++){
+                if(this.adj[node][i].childpoint === ChildDirection.RIGHT){
+                    this.stack.push({ node: this.adj[node][i].node, edgeId: this.adj[node][i].edgeId, parent: node });
+                }
+            }
+            for(let i = 0; i < this.adj[node].length; i++){
+                if(this.adj[node][i].childpoint === ChildDirection.LEFT){
+                    this.stack.push({ node: this.adj[node][i].node, edgeId: this.adj[node][i].edgeId, parent: node });
+                }
+            }
 
-            const nextNodes = this.adj[node]
-                .filter(({ node: y }) => {
-                    return !this.nodes[y].is_vis;
-                })
-                .map(({ node: y, edgeId }) => ({ node: y, edgeId,parent: node})); // Map to include edgeId
-            this.stack.push(...nextNodes);  
             return { node: node, edgeId: edgeId, parent: parent }; // Return an object with node and edgeId
         } else {
             return this.next();
