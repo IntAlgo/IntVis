@@ -1,10 +1,8 @@
 export class DFSgraph {
     constructor(edges, nodes, startnodeId) {
-        // console.log(edges, nodes);
         this.adj = Array.from({ length: nodes.length }, () => []);
         this.edges = edges; // Store the edges
         this.edgeMap = new Map(); // Map to store edge ID based on from and to nodes
-        // console.log(this.adj);
 
         for (let i = 0; i < edges.length; i++) {
             const { from, to } = edges[i];
