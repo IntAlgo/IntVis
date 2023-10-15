@@ -285,9 +285,6 @@ export const Binary_tree = ({ className }: VisNetworkProps) => {
                 nodes.current.update({ id: x?.node, color: 'orange', title: '0' });
                 setTraversalArray(nodes.current.get());
             } else {
-                // edges.current.update({ id: x?.edgeId, color: 'orange', in_tree: true });
-                // edges.current.update({ id: x?.edgeId, color: 'orange', in_tree: true });
-                // let t: any = edges.current.get(x?.edgeId);
                 nodes.current.update({
                     id: x?.node,
                     color: 'orange',

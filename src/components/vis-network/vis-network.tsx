@@ -14,6 +14,8 @@ export interface VisNetworkProps {
 export const VisNetwork = ({ className }: VisNetworkProps) => {
     const { mode, setFinished } = useContext(dataContext);
     const [traversalArray, setTraversalArray]: [any, any] = useState(null);
+    const nextButtonRef = useRef<HTMLButtonElement>(null);
+    const startNodeRef = useRef<number>(0);
 
     let arr_node: dfNode[] = [
         { id: 0, label: '0', is_vis: false, color: 'white', title: '-1' },
@@ -161,97 +163,72 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         treeEdges.current.clear();
     };
 
-    // dfs algo
-    const startDFS = (e: any) => {
-        setFinished(false);
-        let counter = 0;
-        let flag = false;
-        const Df = new DFSgraph(edges.current.get(), nodes.current.get(), e['nodes'][0]);
+    class DFSm {
+        constructor({ e, mode, startNode }: { e: any; mode: String; startNode: number }) {
+            this.e = e;
+            this.mode = mode;
+            this.counter = 0;
+            this.flag = false;
+            this.Df =
+                mode === 'BFS'
+                    ? new BFSgraph(edges.current.get(), nodes.current.get(), startNode)
+                    : new DFSgraph(edges.current.get(), nodes.current.get(), startNode);
+            setFinished(false);
+        }
+        e: any;
+        mode: String;
+        counter: number;
+        flag: Boolean;
+        Df: any;
+        next() {
+            this.flag = false;
+            if (this.Df.complete()) {
+                setFinished(true);
 
-        let inter = setInterval(
-            () => {
-                // console.log(flag);
-                flag = false;
-                if (Df.complete()) {
-                    clearInterval(inter);
-                    setFinished(true);
-
-                    let f = () => {
-                        treeNodes.current.update(
-                            treeNodes.current.map((e) => {
-                                return { ...e, fixed: true };
-                            })
-                        );
-                        edges.current.forEach(
-                            (e) => {
-                                treeEdges.current.add({
-                                    ...e,
-                                    smooth: { enabled: true, type: 'curvedCCW', roundness: 0.7 },
-                                });
+                let f = () => {
+                    treeNodes.current.update(
+                        treeNodes.current.map((e) => {
+                            return { ...e, fixed: true };
+                        })
+                    );
+                    edges.current.forEach(
+                        (e) => {
+                            treeEdges.current.add(e);
+                        },
+                        {
+                            filter: (e) => {
+                                return !e.in_tree;
                             },
-                            {
-                                filter: (e) => {
-                                    return !e.in_tree;
-                                },
-                            }
-                        );
-                    };
-                    f();
-                }
-                let x = Df.next();
-                if (Df.currnode !== null) {
-                    let curr = Df.currnode;
-                    treeNodes.current.updateOnly({ id: curr?.node, color: 'white' });
-                }
-                // console.log('your currnode was is ');
-                // if (Df.currnode !== null) console.log(Df.currnode.node);
+                        }
+                    );
+                };
+                f();
+            }
+            let x = this.Df.next();
+            if (this.Df.currnode !== null) {
+                let curr = this.Df.currnode;
+                treeNodes.current.updateOnly({ id: curr?.node, color: 'white' });
+            }
 
-                Df.currnode = x;
-                if (x === null) {
-                    clearInterval(inter);
-                    return;
-                }
+            this.Df.currnode = x;
 
-                if (x?.edgeId === null) {
-                    nodes.current.update({ id: x?.node, color: 'orange', title: '0' });
-                    setTraversalArray(nodes.current.get());
-                    treeNodes.current.update({
-                        id: x?.node,
-                        color: 'blue',
-                        label: `${x?.node}`,
-                        level: 0,
-                    });
-                    counter++;
-                    return;
-                } else {
-                    if (Df.currnode.node !== x.parent) {
-                        let f = treeNodes.current.get(x.parent);
-                        // console.log(f);
-                        flag = true;
-                        treeNodes.current.update({ id: x.parent, color: 'blue' });
-                        setTimeout(() => {
-                            // console.log('thoda wait karle bhai');
-                            edges.current.update({ id: x?.edgeId, color: 'orange', in_tree: true });
-                            let t: any = edges.current.get(x?.edgeId);
-                            let t2: any = treeNodes.current.get(t.from);
-                            let lev = t2 ? t2.level : 0;
-                            nodes.current.update({
-                                id: x?.node,
-                                color: 'orange',
-                                title: `${counter}`,
-                            });
-                            setTraversalArray(nodes.current.get());
-                            counter++;
-                            treeNodes.current.update({ id: x.parent, color: 'white' });
-                            treeNodes.current.update({
-                                id: x?.node,
-                                color: 'blue',
-                                label: `${x?.node}`,
-                                level: lev + 1,
-                            });
-                            treeEdges.current.update(t);
-                        }, 500);
-                    } else {
+            if (x?.edgeId === null) {
+                nodes.current.update({ id: x?.node, color: 'orange', title: '0' });
+                setTraversalArray(nodes.current.get());
+                treeNodes.current.update({
+                    id: x?.node,
+                    color: 'blue',
+                    label: `${x?.node}`,
+                    level: 0,
+                });
+                this.counter++;
+                return;
+            } else {
+                if (this.Df.currnode.node !== x.parent) {
+                    let f = treeNodes.current.get(x.parent);
+                    this.flag = true;
+                    treeNodes.current.update({ id: x.parent, color: 'blue' });
+                    setTimeout(() => {
                         edges.current.update({ id: x?.edgeId, color: 'orange', in_tree: true });
                         let t: any = edges.current.get(x?.edgeId);
                         let t2: any = treeNodes.current.get(t.from);
@@ -259,10 +236,11 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
                         nodes.current.update({
                             id: x?.node,
                             color: 'orange',
-                            title: `${counter}`,
+                            title: `${this.counter}`,
                         });
                         setTraversalArray(nodes.current.get());
-                        counter++;
+                        this.counter++;
+                        treeNodes.current.update({ id: x.parent, color: 'white' });
                         treeNodes.current.update({
                             id: x?.node,
                             color: 'blue',
@@ -270,52 +248,30 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
                             level: lev + 1,
                         });
                         treeEdges.current.update(t);
-                    }
+                    }, 500);
+                } else {
+                    edges.current.update({ id: x?.edgeId, color: 'orange', in_tree: true });
+                    let t: any = edges.current.get(x?.edgeId);
+                    let t2: any = treeNodes.current.get(t.from);
+                    let lev = t2 ? t2.level : 0;
+                    nodes.current.update({
+                        id: x?.node,
+                        color: 'orange',
+                        title: `${this.counter}`,
+                    });
+                    setTraversalArray(nodes.current.get());
+                    this.counter++;
+                    treeNodes.current.update({
+                        id: x?.node,
+                        color: 'blue',
+                        label: `${x?.node}`,
+                        level: lev + 1,
+                    });
+                    treeEdges.current.update(t);
                 }
-            },
-            flag ? 3000 : 1000
-        );
-    };
-
-    // bfs algo
-    const startBFS = (e: any) => {
-        setFinished(false);
-        let counter = 0;
-        const Bf = new BFSgraph(edges.current.get(), nodes.current.get(), e['nodes'][0]);
-        let inter = setInterval(() => {
-            let x = Bf.next();
-            if (x === null) {
-                clearInterval(inter);
-                return;
             }
-            if (x?.edgeId === null) {
-                nodes.current.update({ id: x?.node, color: 'orange', title: '0' });
-                setTraversalArray(nodes.current.get());
-                counter++;
-                treeNodes.current.update({ id: x?.node, label: `${x?.node}`, level: 0, size: 30 });
-                return;
-            } else {
-                edges.current.update({ id: x?.edgeId, color: 'orange' });
-                let t: any = edges.current.get(x?.edgeId);
-                let t2: any = treeNodes.current.get(t.from);
-                let lev = t2 ? t2.level : 0;
-                nodes.current.update({
-                    id: x?.node,
-                    color: 'orange',
-                    title: `${counter}`,
-                });
-                setTraversalArray(nodes.current.get());
-                counter++;
-                treeNodes.current.update({ id: x?.node, label: `${x?.node}`, level: lev + 1 });
-                treeEdges.current.update(t);
-            }
-
-            if (Bf.complete()) {
-                clearInterval(inter);
-                setFinished(true);
-            }
-        }, 1000);
-    };
+        }
+    }
 
     let funce = async () => {
         network.current?.disableEditMode();
@@ -333,16 +289,59 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         }
         if (mode === 'DFS') {
             await resetGraph();
-            network.current?.on('selectNode', startDFS);
+            let prevNode = -1;
+            let startNode = 0;
+            let traversalInit: DFSm | null = null;
+            network.current?.on('selectNode', (e) => {
+                prevNode = startNode;
+                if (prevNode !== -1) {
+                    nodes.current.updateOnly({ id: prevNode, color: 'white' });
+                }
+                startNode = e['nodes'][0];
+                nodes.current.updateOnly({ id: startNode, color: 'blue' });
+                traversalInit = new DFSm({
+                    e: network.current,
+                    mode: mode,
+                    startNode: startNode,
+                });
+            });
+            nextButtonRef.current?.addEventListener('click', () => {
+                if (traversalInit === null) {
+                    console.log('traversalInit is null');
+                    return;
+                }
+                traversalInit.next();
+            });
             network.current?.setOptions({ physics: { enabled: true } });
         }
         if (mode === 'BFS') {
             await resetGraph();
-            network.current?.on('selectNode', startBFS);
+            let prevNode = -1;
+            let startNode = 0;
+            let traversalInit: DFSm | null = null;
+            network.current?.on('selectNode', (e) => {
+                prevNode = startNode;
+                if (prevNode !== -1) {
+                    nodes.current.updateOnly({ id: prevNode, color: 'white' });
+                }
+                startNode = e['nodes'][0];
+                nodes.current.updateOnly({ id: startNode, color: 'blue' });
+                traversalInit = new DFSm({
+                    e: network.current,
+                    mode: mode,
+                    startNode: startNode,
+                });
+            });
+            nextButtonRef.current?.addEventListener('click', () => {
+                if (traversalInit === null) {
+                    console.log('traversalInit is null');
+                    return;
+                }
+                traversalInit.next();
+            });
             network.current?.setOptions({ physics: { enabled: true } });
         }
         if (mode === 'reset') resetGraph();
-        // console.log(edges.current.get());
     };
     useEffect(func, [visJsRef]);
     useEffect(() => {
@@ -351,7 +350,12 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
     return (
         <div className="w-full h-full">
             <div className="h-full mx-1 my-3 flex justify-between">
-                <TraversalArray traversalArray={traversalArray} />
+                <div>
+                    <button className="p-2 rounded-md border-black border-2" ref={nextButtonRef}>
+                        next
+                    </button>
+                    <TraversalArray traversalArray={traversalArray} />
+                </div>
                 <div
                     ref={visJsRef}
                     className="rounded-md overflow-hidden h-full z-3 w-[48%] bg-cyan-800 mx-auto"
