@@ -182,7 +182,10 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
                         );
                         edges.current.forEach(
                             (e) => {
-                                treeEdges.current.add(e);
+                                treeEdges.current.add({
+                                    ...e,
+                                    smooth: { enabled: true, type: 'curvedCCW', roundness: 0.7 },
+                                });
                             },
                             {
                                 filter: (e) => {

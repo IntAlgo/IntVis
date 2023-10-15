@@ -319,13 +319,19 @@ export const Binary_tree = ({ className }: VisNetworkProps) => {
             await resetGraph();
             setTraversalMode(true);
             network.current?.setOptions({ physics: { enabled: true } });
-            traversal({ e: network.current, mode: 'inorder' });
+            let t = new traversalm({ e: network.current, mode: 'inorder' });
+            nextButtonRef.current?.addEventListener('click', () => {
+                t.next();
+            });
         }
         if (mode === 'postorder') {
             await resetGraph();
             setTraversalMode(true);
             network.current?.setOptions({ physics: { enabled: true } });
-            traversal({ e: network.current, mode: 'postorder' });
+            let t = new traversalm({ e: network.current, mode: 'postorder' });
+            nextButtonRef.current?.addEventListener('click', () => {
+                t.next();
+            });
         }
         if (mode === 'reset') resetGraph();
     };
@@ -341,13 +347,14 @@ export const Binary_tree = ({ className }: VisNetworkProps) => {
             <div className="h-full mx-1 my-3 flex justify-between">
                 <div>
                     <TraversalArray traversalArray={traversalArray} />
-                    <button ref={nextButtonRef}>next</button>
+                    <button className="p-2 rounded-md border-black border-2" ref={nextButtonRef}>
+                        Next
+                    </button>
                 </div>
                 <div
                     ref={visJsRef}
                     className="rounded-md overflow-hidden h-full z-3 w-[98%] bg-cyan-800 mx-auto"
                 />
-                {/* <Tree nodes={nodes} edges={edges} /> */}
             </div>
         </div>
     );
