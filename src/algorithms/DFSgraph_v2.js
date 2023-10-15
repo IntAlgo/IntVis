@@ -1,5 +1,20 @@
 export class DFSgraph {
-    constructor(edges, nodes, startnodeId) {
+    //constructor call from IntVis/src/components/visnetwork/VisNetwork.tsx
+
+    /*
+    Parameters:
+
+        Adjacency List: (we will give nodes and edges as parameters and adjanceney list will be created in the constructor)\
+            structure:
+        startnode
+        treeNodes
+        treeEdges(both will be passed in as parameter and all the changes will be done regarding tree nodes and edges will be handles in DFSgraph.js)
+        Default parameters:
+
+stack: initially empty(values of stack will be pair of node and edge id)
+    */
+
+    constructor(edges, nodes, startnodeId, treeEdges, treeNodes) {
         this.adj = Array.from({ length: nodes.length }, () => []);
         this.edges = edges; // Store the edges
         this.edgeMap = new Map(); // Map to store edge ID based on from and to nodes
@@ -14,47 +29,27 @@ export class DFSgraph {
         this.prevnode = null;
         this.startNode = startnodeId;
         this.nodes = nodes;
-        this.stack = new Array();
-        this.pathVisited = new Map();
+        this.stack = [];
         this.stack.push({ node: this.startNode, edgeId: null, parent: null }); // Store the edgeId as well
-        this.pathVisited.set(this.startNode, true);
     }
     next() {
-        if (this.stack.length === 0) {
-            console.log('stack is empty');
-            return null;
-        }
+        if (this.stack.length === 0) return null;
 
         let { node, edgeId, parent } = this.stack.pop();
         // Destructure the node and edgeId
-        // console.log(`node is ${node}`);
-        // console.log(this.nodes[node].is_vis);
+        console.log(`node is ${node}`);
+        console.log(this.nodes[node].is_vis);
         if (!this.nodes[node].is_vis) {
             this.nodes[node].is_vis = true;
 
             const nextNodes = this.adj[node]
                 .filter(({ node: y }) => {
-                    // if (this.pathVisited.get(y)===undefined) {
-                    //     this.pathVisited.set(y, true);
-                    // }
-                    return !this.nodes[y].is_vis && this.pathVisited.get(y)===undefined;
+                    // console.log(this.nodes[y]);
+                    return !this.nodes[y].is_vis;
                 })
                 .map(({ node: y, edgeId }) => ({ node: y, edgeId, parent: node })); // Map to include edgeId
             // console.log(nextNodes);
-            if (nextNodes.length > 0) {
-                nextNodes.map(({ node: y, edgeId }) => {
-                    this.pathVisited.set(y, true);
-                });
-            }
             this.stack.push(...nextNodes);
-            // const arr = this.stack;
-            // console.log(JSON.stringify(this.stack.length));
-            // console.log(JSON.stringify(this.stack));
-            // console.log(this.pathVisited);
-            // console.log(arr);
-            if (this.stack.length === 0) {
-                console.log('stack is empty');
-            }
             return { node: node, edgeId: edgeId, parent: parent }; // Return an object with node and edgeId
         } else {
             return this.next();

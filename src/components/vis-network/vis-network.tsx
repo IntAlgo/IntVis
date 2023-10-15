@@ -39,6 +39,9 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
         { id: 'h', from: 7, to: 0, color: 'white', in_tree: false },
         { id: 'i', from: 7, to: 9, color: 'white', in_tree: false },
         { id: 'j', from: 4, to: 8, color: 'white', in_tree: false },
+        // { id: 'f', from: 6, to: 2, color: 'white', in_tree: false },
+        // { id: 'k', from: 0, to: 6, color: 'white', in_tree: false },
+        // { id: 'l', from: 6, to: 8, color: 'white', in_tree: false },
     ];
     let nodes: React.MutableRefObject<DataSet<dfNode, 'id'>> = useRef(new DataSet(arr_node));
     let edges = useRef(new DataSet(arr_edge));
@@ -134,7 +137,6 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
     };
 
     const addfn = (e: any) => {
-        // console.log(e);
         let se_node = {
             id: i.current,
             label: `${i.current}`,
