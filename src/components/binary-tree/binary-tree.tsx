@@ -9,15 +9,17 @@ import { dataContext } from '../../context/data-context';
 import { dfNode, binTreeEdge } from '../../types/type';
 import { ChildDirection } from '../../types/enums';
 import TraversalArray from '../../utils/TraversalArray';
+import DSU from '../../algorithms/DisjointSetUnion';
 
 export interface VisNetworkProps {
     className?: string;
 }
 export const Binary_tree = ({ className }: VisNetworkProps) => {
-    const { mode, setFinished } = useContext(dataContext);
+    const { mode, setFinished, setMode } = useContext(dataContext);
     const [traversalArray, setTraversalArray]: [any, any] = useState(null);
     const [traversalMode, setTraversalMode] = useState(false);
     const nextButtonRef = useRef<HTMLButtonElement>(null);
+    var dsu = new DSU([-10, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
 
     let arr_node: dfNode[] = [
         { id: 0, label: '0', is_vis: false, color: 'white', title: '-1' },
@@ -166,10 +168,27 @@ export const Binary_tree = ({ className }: VisNetworkProps) => {
             zoomSpeed: 1,
             zoomView: true,
         },
+        manipulation: {
+            enabled: false,
+            initiallyActive: true,
+            addNode: false,
+            addEdge: function (data: any, callback: any) {
+                if (dsu.union(data.from, data.to)) {
+                    callback({ ...data, color: 'white' });
+                    network.current?.addEdgeMode();
+                } else {
+                    setMode('')
+                    network.current?.disableEditMode();
+                    console.log("Adding this node results in a cycle or the child node already has a parent");
+                }
+            },
+            editEdge: true,
+            deleteEdge: true,
+        },
         physics: false,
     };
 
-    // let i = useRef(10);
+    let i = useRef(10);
     let network = useRef<Network | null>(null);
     const visJsRef = useRef<HTMLDivElement>(null);
     const func = () => {
@@ -179,6 +198,20 @@ export const Binary_tree = ({ className }: VisNetworkProps) => {
         if (network) {
             network.current?.fit({ animation: true, minZoomLevel: 0.7, maxZoomLevel: 1.2 });
         }
+    };
+
+    const addfn = (e: any) => {
+        let se_node = {
+            id: i.current,
+            label: `${i.current}`,
+            is_vis: false,
+            color: 'white',
+            x: e['pointer']['canvas'].x,
+            y: e['pointer']['canvas'].y,
+        };
+        nodes.current.add(se_node);
+        arr_node.push(se_node);
+        i.current += 1;
     };
 
     let resetGraph = async () => {
@@ -256,8 +289,8 @@ export const Binary_tree = ({ className }: VisNetworkProps) => {
                 mode === 'preorder'
                     ? new BinaryTreePreorderTraversal(edges.current.get(), nodes.current.get(), 0)
                     : mode === 'inorder'
-                    ? new BinaryTreeInorderTraversal(edges.current.get(), nodes.current.get(), 0)
-                    : new BinaryTreePostorderTraversal(edges.current.get(), nodes.current.get(), 0);
+                        ? new BinaryTreeInorderTraversal(edges.current.get(), nodes.current.get(), 0)
+                        : new BinaryTreePostorderTraversal(edges.current.get(), nodes.current.get(), 0);
         }
         e: any;
         mode: String;
@@ -332,6 +365,14 @@ export const Binary_tree = ({ className }: VisNetworkProps) => {
             nextButtonRef.current?.addEventListener('click', () => {
                 t.next();
             });
+        }
+        if (mode === 'add') {
+            network.current?.on('click', addfn);
+            network.current?.setOptions({ physics: { enabled: false } });
+        }
+        if (mode === 'edge') {
+            network.current?.addEdgeMode();
+            network.current?.setOptions({ physics: { enabled: false } });
         }
         if (mode === 'reset') resetGraph();
     };

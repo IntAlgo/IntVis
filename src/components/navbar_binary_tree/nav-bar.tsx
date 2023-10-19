@@ -71,7 +71,7 @@ export const NavBar_bin = ({ className }: NavBarProps) => {
                             </div>
                         )}
                     </div>
-                    {/* <div className="relative inline-block text-left h-full">
+                    <div className="relative inline-block text-left h-full">
                         <div
                             className="inline-flex w-full justify-center gap-x-1.5 px-2 text-lg font-semibold text-gray-900 h-full"
                             onClick={() => {
@@ -109,7 +109,7 @@ export const NavBar_bin = ({ className }: NavBarProps) => {
                                 </div>
                             </div>
                         )}
-                    </div> */}
+                    </div>
                     <div
                         onClick={() => setMode('reset')}
                         className="inline-flex w-full justify-center gap-x-1.5 px-2 py-1 text-lg font-semibold text-gray-900 h-full"
