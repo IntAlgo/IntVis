@@ -1,0 +1,72 @@
+{
+    "autoResize": true,
+    "layout": {
+        "randomSeed": 10,
+        "improvedLayout": false,
+        "clusterThreshold": 10,
+        "hierarchical": {
+            "enabled": false,
+            "levelSeparation": 200,
+            "nodeSpacing": 100,
+            "treeSpacing": 200,
+            "blockShifting": true,
+            "edgeMinimization": true,
+            "parentCentralization": true,
+            "direction": "UD",
+            "sortMethod": "directed",
+            "shakeTowards": "leaves"
+        }
+    },
+    "edges": {
+        "arrows": {
+            "to": {
+                "enabled": true,
+                "type": "arrow"
+            }
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "dragView": true,
+        "hideEdgesOnDrag": false,
+        "hideEdgesOnZoom": false,
+        "hideNodesOnDrag": false,
+        "hover": true,
+        "hoverConnectedEdges": true,
+        "keyboard": {
+            "enabled": false,
+            "speed": { "x": 10, "y": 10, "zoom": 0.2
+            },
+            "bindToWindow": true,
+            "autoFocus": true
+        },
+        "multiselect": false,
+        "navigationButtons": false,
+       "selectable": true,
+        "selectConnectedEdges": true,
+        "tooltipDelay": 50,
+        "zoomSpeed": 1,
+        "zoomView": true
+    },
+    "physics": {
+        "enabled": true,
+        "solver": "forceAtlas2Based",
+        "forceAtlas2Based": {
+            "springLength": 20,
+            "springConstant": 0.2,
+            "damping": 0.8,
+            "centralGravity": 0.01
+        }
+    },
+    "manipulation": {
+        "enabled": false,
+        "initiallyActive": true,
+        "addNode": false,
+        "addEdge":false,
+        "editEdge": true,
+        "deleteNode": true,
+        "deleteEdge": true,
+        "controlNodeStyle": {
+        }
+    }
+}

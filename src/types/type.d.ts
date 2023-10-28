@@ -4,6 +4,8 @@ export interface dfNode extends Node {
     id:IdType;
     is_vis: boolean;
     prev?: Number|null;
+    x?: number;
+    y?: number;
 }
 
 export interface dfEdge extends Edge {

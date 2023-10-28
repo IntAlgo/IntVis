@@ -76,9 +76,16 @@ export const Tree = ({ className, nodes, edges }: TreeProps) => {
     };
     useEffect(func, [visJsRef]);
     useEffect(() => {
-        if (finished) {
-            tree_network.current?.storePositions();
-            console.log('used');
+        if (finished&&nodes.current.length) {
+            tree_network.current?.on("beforeDrawing",() => {
+                tree_network.current?.stopSimulation();
+                tree_network.current?.storePositions();
+                // tree_network.current?.setOptions({...options})
+                tree_network.current?.stopSimulation();
+                console.log(nodes.current.get());
+                // tree_network.current?.fit({ animation: true, minZoomLevel: 0.7, maxZoomLevel: 1 });
+            });
+            console.log(tree_network.current);
         }
     }, [finished]);
     return (

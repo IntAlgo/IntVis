@@ -1,13 +1,15 @@
+import assert from "assert";
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { DataSet, Network } from 'vis-network/standalone/esm/vis-network';
 import { DFSgraph } from '../../algorithms/DfsGraph';
 import { dataContext } from '../../context/data-context';
 import { BFSgraph } from '../../algorithms/Bfsgraph';
 import { Node, Edge } from 'vis-network/standalone/esm/vis-network';
+import Graph_data from "./Graph.json";
+// import  options from "./options.json"
 import { Tree } from '../tree/tree';
 import { dfEdge, dfNode } from '../../types/type';
 import TraversalArray from '../../utils/TraversalArray';
-
 export interface VisNetworkProps {
     className?: string;
 }
@@ -15,41 +17,17 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
     const { mode, setFinished } = useContext(dataContext);
     const [traversalArray, setTraversalArray]: [any, any] = useState(null);
     const nextButtonRef = useRef<HTMLButtonElement>(null);
-    const startNodeRef = useRef<number>(0);
-
-    let arr_node: dfNode[] = [
-        { id: 0, label: '0', is_vis: false, color: 'white', title: '-1' },
-        { id: 1, label: '1', is_vis: false, color: 'white', title: '-1' },
-        { id: 2, label: '2', is_vis: false, color: 'white', title: '-1' },
-        { id: 3, label: '3', is_vis: false, color: 'white', title: '-1' },
-        { id: 4, label: '4', is_vis: false, color: 'white', title: '-1' },
-        { id: 5, label: '5', is_vis: false, color: 'white', title: '-1' },
-        { id: 6, label: '6', is_vis: false, color: 'white', title: '-1' },
-        { id: 7, label: '7', is_vis: false, color: 'white', title: '-1' },
-        { id: 8, label: '8', is_vis: false, color: 'white', title: '-1' },
-        { id: 9, label: '9', is_vis: false, color: 'white', title: '-1' },
-    ];
-
-    let arr_edge: dfEdge[] = [
-        { id: 'a', from: 0, to: 2, color: 'white', in_tree: false },
-        { id: 'c', from: 1, to: 3, color: 'white', in_tree: false },
-        { id: 'd', from: 1, to: 4, color: 'white', in_tree: false },
-        { id: 'b', from: 0, to: 1, color: 'white', in_tree: false },
-        { id: 'e', from: 1, to: 5, color: 'white', in_tree: false },
-        { id: 'f', from: 2, to: 6, color: 'white', in_tree: false },
-        { id: 'g', from: 2, to: 7, color: 'white', in_tree: false },
-        { id: 'h', from: 7, to: 0, color: 'white', in_tree: false },
-        { id: 'i', from: 7, to: 9, color: 'white', in_tree: false },
-        { id: 'j', from: 4, to: 8, color: 'white', in_tree: false },
-        // { id: 'f', from: 6, to: 2, color: 'white', in_tree: false },
-        // { id: 'k', from: 0, to: 6, color: 'white', in_tree: false },
-        // { id: 'l', from: 6, to: 8, color: 'white', in_tree: false },
-    ];
+    let arr_node:dfNode[]=Graph_data.arr_node;
+    let arr_edge:dfEdge[]=Graph_data.arr_edge;
     let nodes: React.MutableRefObject<DataSet<dfNode, 'id'>> = useRef(new DataSet(arr_node));
     let edges = useRef(new DataSet(arr_edge));
     let treeNodes: React.MutableRefObject<DataSet<dfNode, 'id'>> = useRef(new DataSet());
     let treeEdges: React.MutableRefObject<DataSet<Edge, 'id'>> = useRef(new DataSet());
-
+    // options.manipulation.addEdge= (data: any, callback: any) => {
+    //     callback({ ...data, color: "white"
+    //     });
+    //     network.current?.addEdgeMode();
+    // },
     let options = {
         autoResize: true,
         layout: {
@@ -184,25 +162,22 @@ export const VisNetwork = ({ className }: VisNetworkProps) => {
             this.flag = false;
             if (this.Df.complete()) {
                 setFinished(true);
-
-                let f = () => {
-                    treeNodes.current.update(
-                        treeNodes.current.map((e) => {
-                            return { ...e, fixed: true };
-                        })
-                    );
-                    edges.current.forEach(
-                        (e) => {
-                            treeEdges.current.add(e);
+                treeNodes.current.update(
+                    treeNodes.current.map((e) => {
+                        return { ...e, fixed: true };
+                    })
+                );
+                edges.current.forEach(
+                    (e) => {
+                        treeEdges.current.add(e);
+                    },
+                    {
+                        filter: (e) => {
+                            return !e.in_tree;
                         },
-                        {
-                            filter: (e) => {
-                                return !e.in_tree;
-                            },
-                        }
-                    );
-                };
-                f();
+                    }
+                );
+                return;
             }
             let x = this.Df.next();
             if (this.Df.currnode !== null) {

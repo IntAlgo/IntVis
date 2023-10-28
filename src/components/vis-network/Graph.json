@@ -1,0 +1,26 @@
+{
+    "arr_node":[
+        { "id": 0, "label": "0", "is_vis": false, "color": "white"},
+        { "id": 1, "label": "1", "is_vis": false, "color": "white"},
+        { "id": 2, "label": "2", "is_vis": false, "color": "white"},
+        { "id": 3, "label": "3", "is_vis": false, "color": "white"},
+        { "id": 4, "label": "4", "is_vis": false, "color": "white"},
+        { "id": 5, "label": "5", "is_vis": false, "color": "white"},
+        { "id": 6, "label": "6", "is_vis": false, "color": "white"},
+        { "id": 7, "label": "7", "is_vis": false, "color": "white"},
+        { "id": 8, "label": "8", "is_vis": false, "color": "white"},
+        { "id": 9, "label": "9", "is_vis": false, "color": "white"}
+    ],
+    "arr_edge":[
+        { "id": "a", "from": 0, "to": 2, "color": "white", "in_tree": false },
+        { "id": "c", "from": 1, "to": 3, "color": "white", "in_tree": false },
+        { "id": "d", "from": 1, "to": 4, "color": "white", "in_tree": false },
+        { "id": "b", "from": 0, "to": 1, "color": "white", "in_tree": false },
+        { "id": "e", "from": 1, "to": 5, "color": "white", "in_tree": false },
+        { "id": "f", "from": 2, "to": 6, "color": "white", "in_tree": false },
+        { "id": "g", "from": 2, "to": 7, "color": "white", "in_tree": false },
+        { "id": "h", "from": 7, "to": 0, "color": "white", "in_tree": false },
+        { "id": "i", "from": 7, "to": 9, "color": "white", "in_tree": false },
+        { "id": "j", "from": 4, "to": 8, "color": "white", "in_tree": false }
+    ]
+}
