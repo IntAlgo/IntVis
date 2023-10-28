@@ -1,5 +1,5 @@
 import { createBoard } from '@wixc3/react-board';
-import { VisNetwork } from '../../../components/vis-network/vis-network';
+import { VisNetwork } from '../../../components/graphTraversal/vis-network/vis-network';
 
 export default createBoard({
     name: 'VisNetwork',

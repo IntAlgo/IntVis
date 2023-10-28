@@ -1,7 +1,7 @@
-import { dataContext } from '../../context/data-context';
+import { dataContext } from '../../../context/data-context';
 import { useContext, useState } from 'react';
 import { finished } from 'stream';
-import NavButton from '../../utils/NavButton';
+import NavButton from '../../../utils/NavButton';
 import classNames from 'classnames';
 export interface NavBarProps {
     className?: string;

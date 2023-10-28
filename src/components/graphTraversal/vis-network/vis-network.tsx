@@ -1,15 +1,15 @@
 import assert from "assert";
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { DataSet, Network } from 'vis-network/standalone/esm/vis-network';
-import { DFSgraph } from '../../algorithms/DfsGraph';
-import { dataContext } from '../../context/data-context';
-import { BFSgraph } from '../../algorithms/Bfsgraph';
+import { DFSgraph } from '../../../algorithms/DfsGraph';
+import { dataContext } from '../../../context/data-context';
+import { BFSgraph } from '../../../algorithms/Bfsgraph';
 import { Node, Edge } from 'vis-network/standalone/esm/vis-network';
 import Graph_data from "./Graph.json";
 // import  options from "./options.json"
 import { Tree } from '../tree/tree';
-import { dfEdge, dfNode } from '../../types/type';
-import TraversalArray from '../../utils/TraversalArray';
+import { dfEdge, dfNode } from '../../../types/type';
+import TraversalArray from '../../../utils/TraversalArray';
 export interface VisNetworkProps {
     className?: string;
 }

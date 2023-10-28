@@ -1,11 +1,11 @@
-import { VisNetwork } from './components/vis-network/vis-network';
-import { NavBar } from './components/nav-bar/nav-bar';
+import { VisNetwork } from './components/graphTraversal/vis-network/vis-network';
+import { NavBar } from './components/graphTraversal/nav-bar/nav-bar';
 import { HomePage } from './components/home-page/homePage';
 import { dataContext } from './context/data-context';
 import { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Binary_tree } from './components/binary-tree/binary-tree';
-import { NavBar_bin } from './components/navbar_binary_tree/nav-bar';
+import { Binary_tree } from './components/treeTraversal/binary-tree/binary-tree';
+import { NavBar_bin } from './components/treeTraversal/navbar_binary_tree/nav-bar';
 
 function App() {
     const [mode, setMode] = useState('start');

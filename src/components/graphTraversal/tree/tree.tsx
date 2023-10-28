@@ -2,7 +2,7 @@
 import styles from './tree.module.scss';
 import { DataSet, Network } from 'vis-network/standalone/esm/vis-network';
 import { useEffect, useRef } from 'react';
-import { dataContext } from '../../context/data-context';
+import { dataContext } from '../../../context/data-context';
 import { useContext } from 'react';
 export interface TreeProps {
     className?: string;

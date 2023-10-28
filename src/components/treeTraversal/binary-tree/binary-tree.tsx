@@ -1,16 +1,16 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { DataSet, Network } from 'vis-network/standalone/esm/vis-network';
-import { BinaryTreePreorderTraversal } from '../../algorithms/treeAlgorithms/preorderTraversal';
-import { BinaryTreeInorderTraversal } from '../../algorithms/treeAlgorithms/inorderTraversal';
-import { BinaryTreePostorderTraversal } from '../../algorithms/treeAlgorithms/postorderTraversal';
-import { dataContext } from '../../context/data-context';
-import { BFSgraph } from '../../algorithms/Bfsgraph';
+import { BinaryTreePreorderTraversal } from '../../../algorithms/treeAlgorithms/preorderTraversal';
+import { BinaryTreeInorderTraversal } from '../../../algorithms/treeAlgorithms/inorderTraversal';
+import { BinaryTreePostorderTraversal } from '../../../algorithms/treeAlgorithms/postorderTraversal';
+import { dataContext } from '../../../context/data-context';
+import { BFSgraph } from '../../../algorithms/Bfsgraph';
 import { Node, Edge } from 'vis-network/standalone/esm/vis-network';
-import { Tree } from '../tree/tree';
+import { Tree } from '../../graphTraversal/tree/tree';
 // import { dfEdge, dfNode, binTreeEdge, ChildDirection } from '../../types/type';
-import { dfNode, binTreeEdge } from '../../types/type';
-import { ChildDirection } from '../../types/enums';
-import TraversalArray from '../../utils/TraversalArray';
+import { dfNode, binTreeEdge } from '../../../types/type';
+import { ChildDirection } from '../../../types/enums';
+import TraversalArray from '../../../utils/TraversalArray';
 
 export interface VisNetworkProps {
     className?: string;
